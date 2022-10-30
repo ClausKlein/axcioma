@@ -68,8 +68,9 @@ echo 'include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU' > "${ACE_ROOT
 # ACE/ACE/ace/config-macosx-lion.h
 # ACE/ACE/ace/config-macosx-leopard.h
 echo '#include "ace/config-macosx.h"' > "${ACE_ROOT}/ace/config.h"
+
 # patch to build ACE with -std=c++20
-#XXX echo '#define throw() noexcept' >> "${ACE_ROOT}/ace/config.h"
+echo '#define throw() noexcept' >> "${ACE_ROOT}/ace/config.h"
 
 # ACE/ACE/bin/MakeProjectCreator/config/default.features
 echo 'ipv6=1' > "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
@@ -86,7 +87,7 @@ perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/examples" -workers
 perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/tests" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
 
 # make all
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} 2>&1 | tee make-all.log
+make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee make-all.log
 make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" 2>&1 | tee -a make-all.log
 make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" 2>&1 | tee -a make-all.log
 make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | tee -a make-all.log
@@ -95,7 +96,7 @@ make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | 
 "${X11_BASE_ROOT}/bin/brix11" run list -l taox11/bin/taox11_tests.lst -r taox11 2>&1 | tee run-list.log
 
 # install
-#XXX make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
+#TODO(CK) make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
 
 #XXX find "${INSTALL_PREFIX}/include" -type d -name home -prune -print0 | xargs -0 tree
 #XXX find "${INSTALL_PREFIX}/include" -type d -name home -prune -print0 | xargs -0 rm -rf
