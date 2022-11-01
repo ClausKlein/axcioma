@@ -26,6 +26,9 @@ export BRIX11_NUMBER_OF_PROCESSORS=6
 rm -rf ciaox11 dancex11
 rm -f ./*.log
 
+# AXCIOMA_v2.2.1 with ACE+TAO-7_0_6
+# see etc/brix11rc
+# and brix11/lib/brix11/brix/common/cmds/bootstrap.rb
 "${X11_BASE_ROOT}/bin/brix11" bootstrap taox11
 
 ############################################################
@@ -54,9 +57,9 @@ make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" 2>&1
 make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | tee -a make-all.log
 
 #TODO: workaround to prevent problems with WSL and windows firewall! CK
-grep -E "^127.0.1.1\s+$HOSTNAME" /etc/hosts && echo "change to 127.0.0.1!" && exit 1
+#FIXME grep -E "^127.0.1.1\s+$HOSTNAME" /etc/hosts && echo "change to 127.0.0.1!" && exit 1
 # make tests
-"${X11_BASE_ROOT}/bin/brix11" run list -l taox11/bin/taox11_tests.lst -r taox11 2>&1 | tee run-list.log
+#FIXME "${X11_BASE_ROOT}/bin/brix11" run list -l taox11/bin/taox11_tests.lst -r taox11 2>&1 | tee run-list.log
 
 # install
 make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
