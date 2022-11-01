@@ -33,7 +33,7 @@ rm -f ./*.log
 
 ############################################################
 # patch to build ACE with -std=c++17
-cd "${ACE_ROOT}" && git stash && patch -p2 < ../../ACE_Auto_Ptr.patch
+#FIXME: cd "${ACE_ROOT}" && git stash && patch -p2 < ../../ACE_Auto_Ptr.patch
 cd "${X11_BASE_ROOT}"
 ############################################################
 

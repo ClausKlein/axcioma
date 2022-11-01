@@ -1,0 +1,18 @@
+make[1]: Entering directory '/home/klein_cl/Workspace/cpp/axcioma/taox11/tao/x11/logger'
+
+GNUmakefile: /home/klein_cl/Workspace/cpp/axcioma/taox11/tao/x11/logger/GNUmakefile.x11_logger MAKEFLAGS=w -j6 --jobserver-auth=4,5
+
+perl -ne'if (/^#END MPC-Generated Install Info/) {exit 0}' \
+  -e'elsif (/^#BEGIN MPC-Generated Install Info/) {$ok=1}' \
+  -e'elsif ($ok && s/^#//) {print}' GNUmakefile.x11_logger | \
+/home/klein_cl/Workspace/cpp/axcioma/ACE/MPC/prj_install.pl -i -s lib_output,header_files,template_files,inline_files \
+  -b header_files=include/tao/x11/logger -b template_files=include/tao/x11/logger -b inline_files=include/tao/x11/logger -o lib_output=lib    \
+  /home/klein_cl/Workspace/cpp/axcioma/stage
+ERROR: Unable to copy X11_logger_export.h to /home/klein_cl/Workspace/cpp/axcioma/stage/include/tao/x11/logger/./X11_logger_export.h
+make[1]: *** [GNUmakefile.x11_logger:251: install] Error 1
+make[1]: Leaving directory '/home/klein_cl/Workspace/cpp/axcioma/taox11/tao/x11/logger'
+make: *** [GNUmakefile:141: install] Error 2
+make: Leaving directory '/home/klein_cl/Workspace/cpp/axcioma'
+
+# see 
+./taox11/tao/x11/logger/x11_logger_export.h

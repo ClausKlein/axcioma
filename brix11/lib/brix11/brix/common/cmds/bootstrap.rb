@@ -65,6 +65,9 @@ module BRIX11
                 tag = bse['tag'] || options[:bootstrap][:tags][bse['id']] || 'master'
                 rc, _, _ = Exec.runcmd('git', 'clone', bse['repo'], '.')
                 #XXX BRIX11.show_msg("Failed to clone #{bse['id']} repository : #{bse['repo']}") unless rc
+                rc, _, _ = Exec.runcmd('git', 'stash') unless rc
+                rc, _, _ = Exec.runcmd('git', 'fetch', '--shallow-since=2020')
+                BRIX11.show_msg("Failed to fetch #{bse['id']} repository : #{bse['repo']}") unless rc
                 rc,_, _ = Exec.runcmd('git', 'checkout', tag)
                 BRIX11.log_fatal("Failed to checkout #{bse['id']} repository tag : #{tag}") unless rc
               end
