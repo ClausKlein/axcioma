@@ -11,21 +11,21 @@ export LANG=C
 export CC=gcc
 export CXX=g++
 
-export WORKSPACE=$(realpath ..)
-export X11_BASE_ROOT="${WORKSPACE}/axcioma"
-export INSTALL_PREFIX="${X11_BASE_ROOT}/stage"
-rm -rf "${INSTALL_PREFIX}"
+export WORKSPACE=$(realpath .)
+export X11_BASE_ROOT="${WORKSPACE}"
+export INSTALL_PREFIX="${X11_BASE_ROOT}/stagedir"
 
 source .env_add.sh
-
-set -x
 
 export BRIX11_VERBOSE=1
 export BRIX11_NUMBER_OF_PROCESSORS=6
 
 # TODO: force to build only taox11! CK
+rm -rf "${INSTALL_PREFIX}"
 rm -rf ciaox11 dancex11
 rm -f ./*.log
+
+set -x
 
 # see etc/brix11rc
 # and brix11/lib/brix11/brix/common/cmds/bootstrap.rb
@@ -33,8 +33,8 @@ rm -f ./*.log
 
 ############################################################
 # patch to build ACE with -std=c++17
-cd "${ACE_ROOT}" && git stash && patch -N -p2 -i ../../ACE_Auto_Ptr.patch
-cd "${TAOX11_ROOT}" && git stash && patch -N -p2 -i ../taox11-system_exception.patch
+#XXX cd "${ACE_ROOT}" && git stash && patch -N -p2 -i ../../ACE_Auto_Ptr.patch
+#XXX cd "${TAOX11_ROOT}" && git stash && patch -N -p2 -i ../taox11-system_exception.patch
 cd "${X11_BASE_ROOT}"
 ############################################################
 
@@ -48,7 +48,7 @@ cd "${X11_BASE_ROOT}"
 # gen GNUmakefile from workspace.mwc
 # see taox11/tao/x11/taox11.mpc
 # and ACE/ACE/ace/ace_for_tao.mpc
-# NO! "${X11_BASE_ROOT}/bin/brix11" gen build workspace.mwc -- gen build ${TAOX11_ROOT}/examples -- gen build ${TAOX11_ROOT}/orbsvcs/tests -- gen build ${TAOX11_ROOT}/tests
+"${X11_BASE_ROOT}/bin/brix11" gen build workspace.mwc -- gen build ${TAOX11_ROOT}/examples -- gen build ${TAOX11_ROOT}/orbsvcs/tests -- gen build ${TAOX11_ROOT}/tests
 ############################################################
 
 # FIXME: quickfixes for OSX
@@ -57,7 +57,7 @@ cd "${X11_BASE_ROOT}"
 # ACE/ACE/include/makeinclude/platform_clang_common.GNU
 # ACE/ACE/include/makeinclude/platform_macosx_common.GNU
 # ACE/ACE/include/makeinclude/platform_macosx.GNU
-echo 'include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU' > "${ACE_ROOT}/include/makeinclude/platform_macros.GNU"
+#XXX echo 'include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU' > "${ACE_ROOT}/include/makeinclude/platform_macros.GNU"
 
 # ACE/ACE/ace/config.h
 # ACE/ACE/ace/config-macosx.h
@@ -70,17 +70,17 @@ echo 'include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU' > "${ACE_ROOT
 # ACE/ACE/ace/config-macosx-mountainlion.h
 # ACE/ACE/ace/config-macosx-lion.h
 # ACE/ACE/ace/config-macosx-leopard.h
-echo '#include "ace/config-macosx.h"' > "${ACE_ROOT}/ace/config.h"
+#XXX echo '#include "ace/config-macosx.h"' > "${ACE_ROOT}/ace/config.h"
 
 # patch to build ACE with -std=c++20
 #TODO echo '#define throw() noexcept' >> "${ACE_ROOT}/ace/config.h"
 
 # ACE/ACE/bin/MakeProjectCreator/config/default.features
-echo 'ipv6=1' > "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
-echo 'versioned_namespace=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
-echo 'acetaompc=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
-echo 'inline=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
-echo 'optimize=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
+#XXX echo 'ipv6=1' > "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
+#XXX echo 'versioned_namespace=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
+#XXX echo 'acetaompc=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
+#XXX echo 'inline=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
+#XXX echo 'optimize=1' >> "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
 
 # generate all GNUmakefile's
 # see workspace.mwc
