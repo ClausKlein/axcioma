@@ -27,7 +27,9 @@ export BRIX11_NUMBER_OF_PROCESSORS=6
 rm -rf ciaox11 dancex11
 rm -f ./*.log
 
-"${X11_BASE_ROOT}/bin/brix11" bootstrap taox11 || echo ignored
+# see etc/brix11rc
+# and brix11/lib/brix11/brix/common/cmds/bootstrap.rb
+"${X11_BASE_ROOT}/bin/brix11" bootstrap taox11
 
 ############################################################
 # patch to build ACE with -std=c++17
@@ -51,6 +53,7 @@ cd "${X11_BASE_ROOT}"
 
 # FIXME: quickfixes for OSX
 # ACE/ACE/include/makeinclude/platform_gcc_clang_common.GNU
+# ACE/ACE/include/makeinclude/platform_g++_common.GNU
 # ACE/ACE/include/makeinclude/platform_clang_common.GNU
 # ACE/ACE/include/makeinclude/platform_macosx_common.GNU
 # ACE/ACE/include/makeinclude/platform_macosx.GNU
@@ -70,7 +73,7 @@ echo 'include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU' > "${ACE_ROOT
 echo '#include "ace/config-macosx.h"' > "${ACE_ROOT}/ace/config.h"
 
 # patch to build ACE with -std=c++20
-echo '#define throw() noexcept' >> "${ACE_ROOT}/ace/config.h"
+#TODO echo '#define throw() noexcept' >> "${ACE_ROOT}/ace/config.h"
 
 # ACE/ACE/bin/MakeProjectCreator/config/default.features
 echo 'ipv6=1' > "${ACE_ROOT}/bin/MakeProjectCreator/config/default.features"
@@ -96,7 +99,7 @@ make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | 
 "${X11_BASE_ROOT}/bin/brix11" run list -l taox11/bin/taox11_tests.lst -r taox11 2>&1 | tee run-list.log
 
 # install
-#TODO(CK) make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
+make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
 
 #XXX find "${INSTALL_PREFIX}/include" -type d -name home -prune -print0 | xargs -0 tree
 #XXX find "${INSTALL_PREFIX}/include" -type d -name home -prune -print0 | xargs -0 rm -rf

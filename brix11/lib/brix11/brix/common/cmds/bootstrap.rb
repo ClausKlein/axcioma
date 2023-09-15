@@ -61,8 +61,11 @@ module BRIX11
               Sys.mkdir(bse['dir'])
               Sys.in_dir(bse['dir']) do
                 tag = bse['tag'] || options[:bootstrap][:tags][bse['id']] || 'master'
-                rc, _, _ = Exec.runcmd('git', 'clone', bse['repo'], '.')
+                rc, _, _ = Exec.runcmd('git', 'clone', bse['repo'], '--shallow-since=2017', '.')
                 #XXX NO! BRIX11.show_msg("Failed to clone #{bse['id']} repository : #{bse['repo']}") unless rc
+                rc, _, _ = Exec.runcmd('git', 'stash') unless rc
+                rc, _, _ = Exec.runcmd('git', 'fetch', '--shallow-since=2017')
+                BRIX11.show_msg("Failed to fetch #{bse['id']} repository : #{bse['repo']}") unless rc
                 rc,_, _ = Exec.runcmd('git', 'checkout', tag)
                 BRIX11.log_fatal("Failed to checkout #{bse['id']} repository tag : #{tag}") unless rc
               end

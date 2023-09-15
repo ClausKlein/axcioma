@@ -27,7 +27,9 @@ export BRIX11_NUMBER_OF_PROCESSORS=6
 rm -rf ciaox11 dancex11
 rm -f ./*.log
 
-"${X11_BASE_ROOT}/bin/brix11" bootstrap taox11 || echo ignored
+# see etc/brix11rc
+# and brix11/lib/brix11/brix/common/cmds/bootstrap.rb
+"${X11_BASE_ROOT}/bin/brix11" bootstrap taox11
 
 ############################################################
 # patch to build ACE with -std=c++17
@@ -51,7 +53,7 @@ cd "${X11_BASE_ROOT}"
 
 # ACE/ACE/ace/config.h
 # patch to build ACE with -std=c++20
-echo '#define throw() noexcept' >> ${ACE_ROOT}/ace/config.h
+#TODO echo '#define throw() noexcept' >> "${ACE_ROOT}/ace/config.h"
 
 #NO! "${X11_BASE_ROOT}/bin/brix11" make -N -d ${X11_BASE_ROOT} -- make -N -d ${TAOX11_ROOT}/examples -- make -N -d ${TAOX11_ROOT}/orbsvcs/tests -- make -N -d ${TAOX11_ROOT}/tests 2>&1 | tee make-all.log
 
@@ -61,14 +63,11 @@ make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests"
 make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" 2>&1 | tee -a make-all.log
 make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | tee -a make-all.log
 
-#TODO: workaround to prevent problems with WSL and windows firewall! CK
-#XXX grep -E "^127.0.1.1\s+$HOSTNAME" /etc/hosts && echo "change to 127.0.0.1!" && exit 1
-
 # make tests
 "${X11_BASE_ROOT}/bin/brix11" run list -l taox11/bin/taox11_tests.lst -r taox11 2>&1 | tee run-list.log
 
 # install
-#XXX make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
+make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
 
 #XXX find "${INSTALL_PREFIX}/include" -type d -name home -prune -print0 | xargs -0 tree
 #XXX find "${INSTALL_PREFIX}/include" -type d -name home -prune -print0 | xargs -0 rm -rf
