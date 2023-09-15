@@ -84,10 +84,10 @@ cd "${X11_BASE_ROOT}"
 
 # generate all GNUmakefile's
 # see workspace.mwc
-perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${X11_BASE_ROOT}/workspace.mwc" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
-perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/orbsvcs/tests" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
-perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/examples" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
-perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/tests" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
+#XXX perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${X11_BASE_ROOT}/workspace.mwc" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
+#XXX perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/orbsvcs/tests" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
+#XXX perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/examples" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
+#XXX perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/tests" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
 
 # make all
 make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee make-all.log
