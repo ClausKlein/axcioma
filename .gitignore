@@ -1,4 +1,3 @@
-build
 .*
 *~
 ACE/
@@ -37,9 +36,11 @@ taox11/latex
 taox11/
 *.gcno
 workspace.mwc*
+build/
 ciaox11/
 dancex11/
 ridl/
 taox11/
-stage/
+stagedir/
+install/
 /lib/*

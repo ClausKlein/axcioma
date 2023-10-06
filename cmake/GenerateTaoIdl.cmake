@@ -39,8 +39,8 @@ macro(TAO_WRAP_IDL)
     endif()
     set(ORIGINAL_PATH $ENV{PATH})
     set(ORIGINAL_LD_PATH $ENV{${LD_PATH_VAR}})
-    set(TAO_LIB_VAR "${LD_PATH_VAR}=${ORIGINAL_LD_PATH}:${ACE_ROOT_DIR}/lib")
-    set(TAO_BIN_VAR "PATH=${ORIGINAL_PATH}:${ACE_ROOT_DIR}/bin")
+    set(TAO_LIB_VAR "${LD_PATH_VAR}=${ORIGINAL_LD_PATH}:${TAOX11_ROOT}/lib")
+    set(TAO_BIN_VAR "PATH=${ORIGINAL_PATH}:${TAOX11_ROOT}/bin")
   endif()
 
   # the generated files need to reference the *_Export files,
@@ -157,7 +157,9 @@ macro(TAO_WRAP_IDL)
     # look for other dependencies
     foreach(idl_dep_full_filename ${ARGN})
       get_filename_component(IDL_DEP_BASE ${idl_dep_full_filename} NAME_WE)
-      if(IDL_FILE_CONTENTS MATCHES ${IDL_DEP_BASE}\\.idl AND NOT idl_dep_full_filename STREQUAL idl_filename)
+      if(IDL_FILE_CONTENTS MATCHES ${IDL_DEP_BASE}\\.idl AND NOT idl_dep_full_filename STREQUAL
+                                                             idl_filename
+      )
         #message(STATUS "${idl_filename} depends on ${idl_dep_full_filename}")
         list(APPEND DEPEND_FILE_LIST ${idl_dep_full_filename})
       endif()
@@ -180,8 +182,11 @@ macro(TAO_WRAP_IDL)
     add_custom_command(
       OUTPUT ${IDL_OUTPUT_FILES}
       DEPENDS ${DEPEND_FILE_LIST}
-      COMMAND ${TAO_BIN_VAR} ${TAO_LIB_VAR} ${TAO_IDL_COMMAND} ARGS ${TAO_IDL_FLAGS} ${EXTRA_TAO_IDL_ARGS}
-              -I${CMAKE_CURRENT_SOURCE_DIR} ${TAO_IDL_INCLUDES} -o ${OOSDIR} ${IDL_DEP_PATH}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMAND
+        ${TAO_BIN_VAR} ${TAO_LIB_VAR} ${TAO_IDL_COMMAND} ARGS ${TAO_IDL_FLAGS}
+        ${EXTRA_TAO_IDL_ARGS} -I${CMAKE_CURRENT_SOURCE_DIR} ${TAO_IDL_INCLUDES} -o ${OOSDIR}
+        ${IDL_DEP_PATH}
     )
 
     list(APPEND TAO_IDL_GENERATED_HEADERS ${IDL_OUTPUT_HEADERS})
