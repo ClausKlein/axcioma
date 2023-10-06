@@ -45,11 +45,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-20.04
-            CC: gcc-10
-            CXX: g++-10
-            ruby: '3.0'
-            PackageDeps: g++-10
           - os: ubuntu-22.04
             CC: gcc-11
             CXX: g++-11
@@ -66,10 +61,15 @@ jobs:
             ruby: '3.2'
             PackageDeps: g++-13
           - os: ubuntu-22.04
-            CC: clang-12
-            CXX: clang++-12
+            CC: clang-14
+            CXX: clang++-14
             ruby: '3.2'
-            PackageDeps: g++-11
+            PackageDeps: clang-14
+          - os: ubuntu-22.04
+            CC: clang-15
+            CXX: clang++-15
+            ruby: '3.2'
+            PackageDeps: clang-15
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} ${{ matrix.CXX }} ruby-${{ matrix.ruby }}
     env:
@@ -146,7 +146,6 @@ jobs:
     - name: Run brix11 gen build
       run: |
         $X11_BASE_ROOT/bin/brix11 gen build workspace.mwc -- gen build $TAOX11_ROOT/examples -- gen build $TAOX11_ROOT/orbsvcs/tests -- gen build $TAOX11_ROOT/tests -- gen build $DANCEX11_ROOT/tests
-        cd "${TAOX11_ROOT}" && git stash && patch -N -p2 -i $X11_BASE_ROOT/taox11-system_exception.patch
     - name: Run brix11 make
       run: |
         $X11_BASE_ROOT/bin/brix11 make -N -d $X11_BASE_ROOT -- make -N -d $TAOX11_ROOT/examples -- make -N -d $TAOX11_ROOT/orbsvcs/tests -- make -N -d $TAOX11_ROOT/tests -- make -N -d $DANCEX11_ROOT/tests -- make -N -d -L $CIAOX11_ROOT=$CIAOX11_ROOT/bin/ciaox11_tests.lst -- make -N -d -L $CIAOX11_ROOT=$CIAOX11_ROOT/connectors/psdd4ccm/bin/psdd4ccm_tests.lst -- make -N -d -L $CIAOX11_ROOT=$CIAOX11_ROOT/ddsx11/vendors/opendds/bin/ddsx11_opendds_tests.lst -- make -N -d -L $CIAOX11_ROOT=$CIAOX11_ROOT/ddsx11/vendors/opendds/bin/dds4ccm_opendds_tests.lst -- make -N -d -L $CIAOX11_ROOT=$CIAOX11_ROOT/exf/bin/exf_tests.lst
