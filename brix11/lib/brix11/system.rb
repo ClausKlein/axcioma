@@ -14,6 +14,10 @@ module BRIX11
       /mingw/ =~ RUBY_PLATFORM ? true : false
     end
 
+    def self.darwin?
+      /darwin/ =~ RUBY_PLATFORM ? true : false
+    end
+
     def self.has_ansi?
       # only ANSI escape code support on Windows
       # if ANSICON (https://github.com/adoxa/ansicon) installed
@@ -23,11 +27,16 @@ module BRIX11
     def self.get_cpu_cores
       unless @cpu_cores
         if mswin?
-          @cpu_cores = (ENV['NUMBER_OF_PROCESSORS'] || 1).to_i
-        elsif File.exist?('/usr/sbin/sysctl')
-          @cpu_cores = (`/usr/sbin/sysctl -n hw.ncpu` rescue '1').strip.to_i
+          cpu_cores = (ENV['NUMBER_OF_PROCESSORS'] || 1).to_i
+        elsif darwin? && File.exist?('/usr/sbin/sysctl')
+          cpu_cores = (`/usr/sbin/sysctl -n hw.ncpu` rescue '1').strip.to_i
         else
-          @cpu_cores = (`cat /proc/cpuinfo | grep processor | wc -l` rescue '1').strip.to_i
+          cpu_cores = (`cat /proc/cpuinfo | grep processor | wc -l` rescue '1').strip.to_i
+        end
+        if cpu_cores == 0
+          @cpu_cores = (ENV['BRIX11_NUMBER_OF_PROCESSORS'] || 6).to_i
+        else
+          @cpu_cores = cpu_cores
         end
       end
       @cpu_cores

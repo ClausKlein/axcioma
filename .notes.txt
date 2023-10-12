@@ -1,0 +1,82 @@
+#! /bin/bash
+# git clone https://github.com/ClausKlein/axcioma.git
+# cd axcioma && git switch feature/build-on-osx
+#
+# see too:
+# etc/brix11rc
+# etc/configurerc
+# .github/workflows/linux.yml
+
+source .envrc
+
+rm -rf "${INSTALL_PREFIX}"
+# NOTE: force to build only taox11! CK
+
+bin/brix11 bootstrap taox11
+
+# just in case
+rm -rf ciaox11 dancex11
+
+export CC=gcc
+export CXX=g++
+
+bin/brix11 configure
+
+# BRIX11 - Processing specifications
+# BRIX11 - Processing dependencies for [acetao]
+# BRIX11 - INFO : Verification of require [:targetsysroot] failed for feature :crossbuild for module :acetao. Disabling feature.
+# BRIX11 - INFO : Verification of file [${SSL_ROOT}/include/openssl/ssl.h] failed for feature :ssl for module :acetao. Disabling feature.
+# BRIX11 - INFO : Verification of file [${BZIP2_ROOT}/include/bzlib.h] failed for feature :bzip2 for module :acetao. Disabling feature.
+# BRIX11 - INFO : Verification of file [${ZLIB_ROOT}/include/zlib.h] failed for feature :zlib for module :acetao. Disabling feature.
+# BRIX11 - INFO : Verification of require [:valgrindcmd] failed for feature :valgrind for module :acetao. Disabling feature.
+# BRIX11 - INFO : Verification of require [:valgrindcmd] failed for feature :valgrind_keep_debuginfo for module :acetao. Disabling feature.
+# BRIX11 - Processing dependencies for [taox11]
+# BRIX11 - Processing features for [acetao]
+# BRIX11 - Processing features for [taox11]
+# BRIX11 - Generating configuration
+# BRIX11 - Creating /Users/clausklein/Workspace/cpp/axcioma/ACE/ACE/ace/config.h
+# BRIX11 - Creating /Users/clausklein/Workspace/cpp/axcioma/ACE/ACE/include/makeinclude/platform_macros.GNU
+# BRIX11 - Creating /Users/clausklein/Workspace/cpp/axcioma/ACE/ACE/bin/MakeProjectCreator/config/default.features
+# BRIX11 - Creating /Users/clausklein/Workspace/cpp/axcioma/.ridlrc
+# BRIX11 - Creating /Users/clausklein/Workspace/cpp/axcioma/.brix11rc
+# BRIX11 - Creating /Users/clausklein/Workspace/cpp/axcioma/taox11/bin/MPC/config/MPC.cfg
+# BRIX11 - Creating /Users/clausklein/Workspace/cpp/axcioma/workspace.mwc
+# BRIX11 - Configure finished. Exiting BRIX11.
+
+# brix11//lib/brix11/system.rb
+# see brix11/lib/brix11/brix/common/cmds/configure/ace_config.rb
+# echo 'CCFLAGS+=-std=c++17' >> ACE/ACE/include/makeinclude/platform_macros.GNU
+#                        ACE/ACE/include/makeinclude/platform_macosx.GNU
+#                        ACE/ACE/include/makeinclude/platform_macosx_common.GNU
+#                        ACE/ACE/include/makeinclude/macros.GNU
+#                        taox11/tao/rules.taox11.GNU
+#                        ACE/TAO/rules.tao.GNU
+#                        ACE/ACE/include/makeinclude/platform_g++_common.GNU:include $(ACE_ROOT)/include/makeinclude/platform_gcc_clang_common.GNU
+#                        ACE/ACE/include/makeinclude/platform_clang_common.GNU:include $(ACE_ROOT)/include/makeinclude/platform_gcc_clang_common.GNU
+#                        ACE/ACE/include/makeinclude/platform_gcc_clang_common.GNU
+#                        ACE/ACE/include/makeinclude/rules.common.GNU
+#                        ACE/ACE/include/makeinclude/rules.lib.GNU
+#                        ACE/ACE/include/makeinclude/rules.nonested.GNU
+#                        ACE/ACE/include/makeinclude/rules.local.GNU
+#                        ACE/ACE/include/makeinclude/wrapper_macros.GNU
+
+bin/brix11 env -- configure -P 2>&1 | tee configure.log
+
+bin/brix11 gen build workspace.mwc
+
+find . -type d -name .shobj | xargs rm -rf
+
+which builddriver || pipx install builddriver
+builddriver bin/brix11 make -v -v
+
+# FIXME: install is only partly usable!
+make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
+
+# NOTE: remove the installed include garbage! CK
+rm -rf "${INSTALL_PREFIX}/include"
+
+pipx install cmake
+pipx install ninja
+pipx install gcovr
+
+echo OK

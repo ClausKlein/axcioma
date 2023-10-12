@@ -33,3 +33,8 @@ taox11/html
 taox11/latex
 *.gcno
 workspace.mwc*
+/lib/
+/ridl/
+/stagedir/
+/taox11/
+/build/

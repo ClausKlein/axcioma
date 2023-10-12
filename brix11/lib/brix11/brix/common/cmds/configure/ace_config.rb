@@ -80,6 +80,7 @@ module BRIX11
               end
               # generate default platform macros
               platform_macros_io << default_platform_macros(cfg.options)
+              platform_macros_io.puts("c++std=c++17")
               platform_macros_io.puts(%Q{include $(ACE_ROOT)/include/makeinclude/#{make_include(cfg.options)}})
               platform_macros_io << (cfg.options[:platform][:gnumake_post] || '')
             ensure
