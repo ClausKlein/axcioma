@@ -12,10 +12,15 @@ source .envrc
 rm -rf "${INSTALL_PREFIX}"
 # NOTE: force to build only taox11! CK
 
+set -u
+set -e
+set -x
+
 bin/brix11 bootstrap taox11
 
 # just in case
 rm -rf ciaox11 dancex11
+find . -type d -name .shobj | xargs rm -rf
 
 export CC=gcc
 export CXX=g++
@@ -64,7 +69,6 @@ bin/brix11 env -- configure -P 2>&1 | tee configure.log
 
 bin/brix11 gen build workspace.mwc
 
-find . -type d -name .shobj | xargs rm -rf
 
 which builddriver || pipx install builddriver
 builddriver bin/brix11 make -v -v
@@ -75,8 +79,8 @@ make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee 
 # NOTE: remove the installed include garbage! CK
 rm -rf "${INSTALL_PREFIX}/include"
 
-pipx install cmake
-pipx install ninja
-pipx install gcovr
+which cmake || pipx install cmake
+which ninja || pipx install ninja
+which gcovr || pipx install gcovr
 
 echo OK

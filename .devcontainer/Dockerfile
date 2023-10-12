@@ -5,7 +5,7 @@ RUN apt-get update -qq && \
     # install nodejs and ruby-rubygems
     apt-get install -y --no-install-recommends \
         libxerces-c-dev libssl-dev libzmq3-dev libbz2-dev \
-        ruby-rubygems nodejs npm vim symlinks && \
+        git ruby-rubygems nodejs npm vim symlinks && \
     gem install asciidoctor:2.0.15 coderay && \
     # install setup-cpp
     npm install -g setup-cpp@v0.35.1 && \
