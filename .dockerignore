@@ -1,4 +1,7 @@
-.*
+.brix11rc*
+.ridlrc*
+.*.swp
+.*~
 *~
 ACE/
 ACE_TAO/
@@ -44,3 +47,4 @@ taox11/
 stagedir/
 install/
 /lib/*
+.git/
