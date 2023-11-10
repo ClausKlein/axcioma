@@ -4,12 +4,14 @@ on:
   push:
     branches:
       - master
+      - develop
       - v*
     tags:
       - AXCIOMA-v*
   pull_request:
     branches:
       - master
+      - develop
       - v*
   schedule:
     - cron: '0 1 * * SUN'
@@ -39,17 +41,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            CC: gcc-9
-            CXX: g++-9
-            ruby: '2.5'
-            PackageDeps: g++-9
-          - os: ubuntu-22.04
-            CC: gcc-9
-            CXX: g++-9
-            ruby: '2.6'
-            PackageDeps: g++-9
-          - os: ubuntu-22.04
+          - os: ubuntu-20.04
             CC: gcc-10
             CXX: g++-10
             ruby: '2.7'
@@ -57,7 +49,7 @@ jobs:
           - os: ubuntu-22.04
             CC: gcc-11
             CXX: g++-11
-            ruby: '3.0'
+            ruby: '3.1'
             PackageDeps: g++-11
           - os: ubuntu-22.04
             CC: gcc-12
@@ -69,6 +61,16 @@ jobs:
             CXX: g++-13
             ruby: '3.2'
             PackageDeps: g++-13
+          - os: ubuntu-22.04
+            CC: clang-12
+            CXX: clang++-12
+            ruby: '3.2'
+            PackageDeps: clang-12
+          - os: ubuntu-22.04
+            CC: clang-13
+            CXX: clang++-13
+            ruby: '3.2'
+            PackageDeps: clang-13
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} ${{ matrix.CXX }} ruby-${{ matrix.ruby }}
     env:

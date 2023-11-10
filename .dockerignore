@@ -1,4 +1,7 @@
-.*
+.brix11rc*
+.ridlrc*
+.*.swp
+.*~
 *~
 ACE/
 ACE_TAO/
@@ -40,6 +43,8 @@ build/
 ciaox11/
 dancex11/
 ridl/
+taox11/
 stagedir/
 install/
 /lib/*
+.git/
