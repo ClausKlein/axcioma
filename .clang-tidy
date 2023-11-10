@@ -1,0 +1,23 @@
+---
+Checks:
+'-*,
+ bugprone-*,-bugprone-reserved-identifier,
+ cert-*,
+ clang-diagnostic-*,-clang-diagnostic-c++17-extensions,
+ clang-analyzer-*,
+ google-*,-google-build-using-namespace,
+ hicpp-*,-hicpp-no-array-decay,-hicpp-avoid-c-arrays,-hicpp-use-auto,
+ misc-*,
+ portability-*,
+ performance-*,
+ -readability-*,-readability-magic-*,-readability-identifier-length,
+ -modernize-*,-modernize-use-*,-modernize-avoid-c-arrays,
+'
+
+WarningsAsErrors: 'clang-*'
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle:     file
+User:            CK
+
+...
