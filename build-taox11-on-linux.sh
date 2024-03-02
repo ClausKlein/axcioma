@@ -8,8 +8,8 @@ set -e
 set -u
 
 export LANG=C
-export CC=gcc
-export CXX=g++
+export CC=${CC:-clang}
+export CXX=${CXX:=-clang++}
 
 export WORKSPACE=$(realpath .)
 export X11_BASE_ROOT="${WORKSPACE}"

@@ -47,4 +47,4 @@ taox11/
 stagedir/
 install/
 /lib/*
-.git/
+# .git/
