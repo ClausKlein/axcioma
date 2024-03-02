@@ -10,7 +10,7 @@ RUN apt-get update -qq && \
         git ruby-rubygems nodejs npm vim less tree symlinks && \
     gem install asciidoctor:2.0.15 coderay && \
     # install setup-cpp
-    npm install -g setup-cpp@v0.36.0 && \
+    npm install -g setup-cpp@v0.37.0 && \
     # install the compiler and tools
     setup-cpp \
         --nala true \
