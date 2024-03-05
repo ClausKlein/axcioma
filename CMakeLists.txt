@@ -2,7 +2,7 @@
 # CMake should be called via ".../brix11 execute cmake", as then all the brix11
 # generated environment variables will be set automatically.
 
-cmake_minimum_required(VERSION 3.21...3.27)
+cmake_minimum_required(VERSION 3.21...3.29)
 #
 # see https://cmake.org/cmake/help/latest/index.html for introduction
 #
@@ -13,7 +13,7 @@ option(CMAKE_EXPORT_COMPILE_COMMANDS "for clang-tidy" ON)
 
 project(
   itaox11
-  VERSION 2.2.0
+  VERSION 2.5.1.1
   LANGUAGES CXX
 )
 
@@ -261,7 +261,7 @@ install(
   PATTERN "*.cmake"
 )
 
-CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.11.0")
+CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.11.2")
 
 packageProject(
   NAME itaox11
