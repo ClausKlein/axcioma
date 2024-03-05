@@ -3,13 +3,16 @@
 source .envrc
 
 # configure
-BUILD_DIR=${PWD}/build
-STAGE_DIR=${PWD}/install
-CCACHE=`which ccache`
+export BUILD_DIR=${PWD}/build
+export STAGE_DIR=${PWD}/install
+export CCACHE=`which ccache`
 
 pipx install cmake && \
 pipx install ninja && \
-pipx install builddriver || echo ignored
+pipx install builddriver
+
+cat configure.log
+builddriver cat make-all.log
 
 set -e
 set -u
@@ -47,15 +50,17 @@ mkdir -p ${STAGE_DIR}
 # rm -rf ${STAGE_DIR}/bin/fuzzers
 # rm -rf ${STAGE_DIR}/bin/*.bat
 
-PATH="/usr/local/opt/gnu-tar/libexec/gnubin:${PATH}"
+# path needed for Darwin
+export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/gnu-tar/libexec/gnubin:${PATH}"
 pushd ${BUILD_DIR} && cpack -G TGZ
 tar -C ${STAGE_DIR} -xzvf ${PWD}/itaox11-*.tar.gz --strip-components=1 \
     --exclude="*.a" --exclude="*.bat" --exclude=fuzzers --exclude=pkgconfig
 popd
 
-# cleanup
+# cleanup dead symlinks
 symlinks -rvd ${STAGE_DIR}/lib
 
+# rpath needed for Darwin
 for f in ${STAGE_DIR}/bin/*
 do
     install_name_tool -add_rpath @executable_path/../lib $f || echo ignored
@@ -68,7 +73,9 @@ find ${STAGE_DIR}/lib -name 'lib*.so*' -o -name 'lib*.dylib' | egrep -v '(taox11
 
 # test installed example
 export PATH="${STAGE_DIR}/bin:${PATH}"
-pushd ${STAGE_DIR}/bin && ./run_test.pl -s #XXX -debug
-#XXX pushd ${BUILD_DIR} && ctest --output-on-failure
+#NO! pushd ${STAGE_DIR}/bin && ./run_test.pl -s -debug
+pushd ${BUILD_DIR} && ctest --output-on-failure
 
-pushd ${BUILD_DIR} && run-clang-tidy -checks='-*,hicpp-exception-baseclass'
+# path needed for Linux
+export PATH="/usr/lib/llvm-17/bin:${PATH}"
+pushd ${BUILD_DIR} && run-clang-tidy -checks='-*,bugprone-*,-bugprone-reserved-identifier,hicpp-*,-hicpp-avoid-c-arrays,-hicpp-exception-baseclass,-hicpp-no-array-decay,-hicpp-braces-around-statements' || echo ignored

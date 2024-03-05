@@ -7,7 +7,7 @@ RUN apt-get update -qq && \
     # install nodejs and ruby-rubygems
     apt-get install -y --no-install-recommends direnv \
         libxerces-c-dev libssl-dev libzmq3-dev libbz2-dev \
-        git ruby-rubygems nodejs npm busybox tree symlinks && \
+        git ruby-rubygems nodejs npm busybox symlinks && \
     gem install asciidoctor:2.0.15 coderay && \
     # install setup-cpp
     npm install -g setup-cpp@v0.37.0 && \
@@ -20,6 +20,7 @@ RUN apt-get update -qq && \
         --gcovr true \
         --doxygen true \
         --ccache true && \
+    pip install cmake ninja builddriver && \
     # cleanup
     nala autoremove -y && \
     nala autopurge -y && \
@@ -28,17 +29,20 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
 
-RUN git clone https://github.com/ClausKlein/axcioma.git && \
-    pip install cmake ninja builddriver && \
-    cd axcioma && git switch feature/fix-build-on-linux && git pull && \
-    builddriver ./build-taox11-on-linux.sh && \
-    # bin/brix11 bootstrap taox11
+#### Building (example)
+FROM setup-cpp-ubuntu AS builder
+
+# Include project
+WORKDIR /axcioma
+COPY . .
+
+# Build project
+RUN bash -c 'source ~/.cpprc && ./build-taox11-on-linux.sh'
 
 ENV CC clang
 ENV CXX clang++
 ENV BRIX11_NUMBER_OF_PROCESSORS 6
 ENV BRIX11_VERBOSE 2
 
-WORKDIR /axcioma
-
+# for interactive tests
 ENTRYPOINT ["/bin/bash"]
