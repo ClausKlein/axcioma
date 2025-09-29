@@ -161,8 +161,8 @@ install(
   DESTINATION ${CMAKE_INSTALL_DATADIR}/taox11
 )
 install(
-  FILES $ENV{TAOX11_ROOT}/tao/x11/versionx11.h
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/taox11/tao/x11
+  FILES $ENV{TAOX11_ROOT}/tao/x11/base/versionx11.h
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/taox11/tao/x11/base
 )
 
 # NOTE: With attached / means contents (*.so *.lib *.a pkgconfig)! CK

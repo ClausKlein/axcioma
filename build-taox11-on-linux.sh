@@ -8,8 +8,8 @@ set -e
 set -u
 
 export LANG=C
-export CC=${CC:-clang}
-export CXX=${CXX:=-clang++}
+export CC=${CC:-gcc-13}
+export CXX=${CXX:=-g++-13}
 
 export WORKSPACE=$(realpath .)
 export X11_BASE_ROOT="${WORKSPACE}"
@@ -31,6 +31,10 @@ set -x
 "${X11_BASE_ROOT}/bin/brix11" configure -W aceroot="${ACE_ROOT}" -W taoroot="${TAO_ROOT}" -W mpcroot="${MPC_ROOT}"
 
 # patch $ACE_ROOT/include/makeinclude/platform_macros.GNU
+# includes $ACE_ROOT/include/makeinclude/platform_linux.GNU
+# includes $ACE_ROOT/include/makeinclude/platform_g++_common.GNU
+# includes $ACE_ROOT/include/makeinclude/platform_clang_common.GNU
+# includes $ACE_ROOT/include/makeinclude/platform_linux_common.GNU
 echo "c++std=c++17" >> ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
 
 # Print brix11 configuration
