@@ -17,12 +17,16 @@ export INSTALL_PREFIX="${X11_BASE_ROOT}/stagedir"
 
 source .envrc
 
-export PATH="/usr/local/opt/llvm/bin:${PATH}"
-export CXX=/usr/local/opt/llvm/bin/clang++
-export CC=/usr/local/opt/llvm/bin/clang
-export LDFLAGS="-L/usr/local/opt/llvm/lib/c++ -Wl,-rpath,/usr/local/opt/llvm/lib/c++"
-export LDFLAGS="-L/usr/local/opt/llvm/lib ${LDFLAGS}"
-export CPPFLAGS="-I/usr/local/opt/llvm/include"
+export LLVM_PREFIX=`brew --prefix llvm@21`
+export LLVM_ROOT=`realpath ${LLVM_PREFIX}`
+# for clang-tools
+export PATH=${LLVM_ROOT}/bin:${PATH}
+export PATH="/usr/local/Cellar/ruby/3.4.6/bin:$PATH"
+
+# XXX export CXX=${LLVM_ROOT}/bin/clang++
+# XXX export CC=${LLVM_ROOT}/bin/clang
+# XXX export LDFLAGS="-L${LLVM_ROOT}/lib/c++ -lc++abi -lc++"
+
 
 # TODO(CK): force to build only taox11!
 rm -rf "${INSTALL_PREFIX}"
@@ -70,7 +74,7 @@ platform_file='include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU'
 # ACE/ACE/ace/config-macosx-leopard.h
 echo '#include "ace/config-macosx.h"' > "${ACE_ROOT}/ace/config.h"
 
-# create $ACE_ROOT/include/makeinclude/platform_macros.GNU
+# create ACE/ACE/include/makeinclude/platform_macros.GNU
 echo "c++std=c++17" > ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
 echo ${platform_file} >> ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
 
@@ -90,10 +94,10 @@ perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/tests" -workers ${
 perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/orbsvcs/tests" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
 
 # make all
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" #XXX 2>&1 | tee make-all.log
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" #XXX 2>&1 | tee -a make-all.log
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" #XXX 2>&1 | tee -a make-all.log
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" #XXX 2>&1 | tee -a make-all.log
+make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee make-all.log
+#XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" #XXX 2>&1 | tee -a make-all.log
+#XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" #XXX 2>&1 | tee -a make-all.log
+#XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" #XXX 2>&1 | tee -a make-all.log
 
 # TODO: run all tests
 # taox11/bin/taox11_tests.lst
@@ -104,7 +108,7 @@ make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests"
 # FIXME: "${X11_BASE_ROOT}/bin/brix11" run list -l taox11/bin/taox11_tests.lst -r taox11 #XXX 2>&1 | tee run-list.log
 
 # FIXME: install is only partly usable!
-make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install #XXX 2>&1 | tee make-install.log
+make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
 
 # NOTE: remove the installed garbage from include directory tree! CK
 rm -rf "${INSTALL_PREFIX}/include"

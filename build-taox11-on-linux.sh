@@ -9,7 +9,7 @@ set -u
 
 export LANG=C
 export CC=${CC:-gcc-13}
-export CXX=${CXX:=-g++-13}
+export CXX=${CXX:-g++-13}
 
 export WORKSPACE=$(realpath .)
 export X11_BASE_ROOT="${WORKSPACE}"
