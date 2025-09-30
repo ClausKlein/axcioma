@@ -135,7 +135,7 @@ foreach(lib_ ${TAOX11_LIBRARIES})
   find_library(
     ${lib_}_LIB
     NAMES ${lib_} ${lib_}d
-    NO_DEFAULT_PATH
+    # NO_DEFAULT_PATH
     PATHS $ENV{X11_BASE_ROOT}/stagedir/lib REQUIRED
   )
   message(TRACE "install lib ${${lib_}_LIB}")
@@ -274,14 +274,16 @@ packageProject(
 
 enable_testing()
 
-# NOTE: EXCLUDE_FROM_ALL must be OFF or targets will NOT be installed! CK
-CPMAddPackage(
-  NAME Callback_Quoter
-  GITHUB_REPOSITORY "ClausKlein/Callback_Quoter"
-  GIT_TAG 6e4b1f50e70a2ee8e224bf1b176a915053f8e8d6
-  EXCLUDE_FROM_ALL OFF
-  OPTIONS "CMAKE_UNITY_BUILD NO"
-)
+if(NOT MSVC)
+  # NOTE: EXCLUDE_FROM_ALL must be OFF or targets will NOT be installed! CK
+  CPMAddPackage(
+    NAME Callback_Quoter
+    GITHUB_REPOSITORY "ClausKlein/Callback_Quoter"
+    GIT_TAG 6e4b1f50e70a2ee8e224bf1b176a915053f8e8d6
+    EXCLUDE_FROM_ALL OFF
+    OPTIONS "CMAKE_UNITY_BUILD NO"
+  )
+endif()
 
 set(CPACK_GENERATOR "TGZ")
 include(CPack)
