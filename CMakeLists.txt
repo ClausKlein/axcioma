@@ -70,7 +70,7 @@ message(TRACE "${TAOX11_INCLUDE_DIRS}")
 
 # use original headers:
 target_include_directories(
-  itaox11 INTERFACE ${TAOX11_INCLUDE_DIRS} $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  itaox11 SYSTEM INTERFACE ${TAOX11_INCLUDE_DIRS} $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 # the installed stagedir/include subdirs:
@@ -122,6 +122,7 @@ set(TAOX11_LIBRARIES
     taox11_valuetype
     x11_logger
 )
+
 target_link_libraries(itaox11 INTERFACE ${TAOX11_LIBRARIES})
 # use original libs:
 target_link_directories(
@@ -133,13 +134,23 @@ target_compile_features(itaox11 INTERFACE cxx_std_17)
 message(TRACE "X11_BASE_ROOT=$ENV{X11_BASE_ROOT}")
 foreach(lib_ ${TAOX11_LIBRARIES})
   find_library(
-    ${lib_}_LIB
-    NAMES ${lib_} ${lib_}d
-    # NO_DEFAULT_PATH
-    PATHS $ENV{X11_BASE_ROOT}/stagedir/lib REQUIRED
+    ${lib_}_LIBRARY
+    NAMES ${lib_} ${lib_}s ${lib_}d ${lib_}sd
+    # XXX NO_DEFAULT_PATH
+    PATHS $ENV{ACE_ROOT}/lib $ENV{X11_BASE_ROOT}/lib $ENV{X11_BASE_ROOT}/stagedir/lib REQUIRED
   )
-  message(TRACE "install lib ${${lib_}_LIB}")
+  message(STATUS "Found lib ${${lib_}_LIBRARY}")
+  list(APPEND FOUND_TAOX11_LIBRARIES ${${lib_}_LIBRARY})
+  # NOTE: this installs only symlinks witch are not usable! install(FILES ${${lib_}_LIBRARY} TYPE LIB)
 endforeach()
+
+# TODO(CK): append postfix 's' for static and 'd' for debug!
+target_link_libraries(itaox11 INTERFACE ${TAOX11_LIBRARIES})
+# use original libs:
+target_link_directories(
+  itaox11 INTERFACE $<BUILD_INTERFACE:$ENV{ACE_ROOT}/lib> $<BUILD_INTERFACE:$ENV{X11_BASE_ROOT}/lib>
+  $<BUILD_INTERFACE:$ENV{X11_BASE_ROOT}/stagedir/lib> $<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}>
+)
 
 # NOTE: install all libs, more than yet used, but with symlinks to dll's! CK
 if(UNIX)
@@ -148,6 +159,9 @@ else()
   install(DIRECTORY $ENV{ACE_ROOT}/lib/ TYPE LIB)
   install(DIRECTORY $ENV{X11_BASE_ROOT}/lib/ TYPE LIB)
 endif()
+
+# NOTE: With attached / means contents (*.so *.lib *.a pkgconfig)! CK
+install(DIRECTORY $ENV{RIDL_ROOT}/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # NOTE: needed for run_test.pl
 install(
@@ -164,9 +178,6 @@ install(
   FILES $ENV{TAOX11_ROOT}/tao/x11/base/versionx11.h
   DESTINATION ${CMAKE_INSTALL_DATADIR}/taox11/tao/x11/base
 )
-
-# NOTE: With attached / means contents (*.so *.lib *.a pkgconfig)! CK
-install(DIRECTORY $ENV{RIDL_ROOT}/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # stagedir/lib
 # ├── ridl
@@ -199,8 +210,10 @@ endif()
 # stagedir/bin
 # ├── ace_gperf
 # ├── brix11
+# ├── brix11.bat
 # ├── fuzzers
 # ├── ridlc
+# ├── ridlc.bat
 # ├── tao_catior
 # ├── tao_cosnaming
 # └── tao_idl
@@ -208,10 +221,8 @@ endif()
 if(APPLE) # "think different", indeed! CK
   # see
   # https://opensource.apple.com/source/clang/clang-703.0.31/src/tools/clang/docs/MSVCCompatibility.rst.auto.html
-  target_compile_options(itaox11 INTERFACE -fdelayed-template-parsing -Wno-deprecated-declarations)
-  target_compile_definitions(
-    itaox11 INTERFACE ACE_HAS_IPV6 ACE_HAS_VERSIONED_NAMESPACE=1 ACE_HAS_CUSTOM_EXPORT_MACROS=0
-  )
+  target_compile_options(itaox11 INTERFACE -fdelayed-template-parsing -Wdeprecated-declarations)
+  target_compile_definitions(itaox11 INTERFACE ACE_HAS_IPV6 ACE_HAS_VERSIONED_NAMESPACE=1 ACE_HAS_CUSTOM_EXPORT_MACROS=0)
   target_compile_definitions(itaox11 INTERFACE __ACE_INLINE__)
 elseif(UNIX)
   # see https://clang.llvm.org/docs/ClangCommandLineReference.html
@@ -224,16 +235,14 @@ elseif(UNIX)
   endif()
   target_compile_definitions(itaox11 INTERFACE _GNU_SOURCE)
   # Give inline C++ member functions hidden visibility by default
-  target_compile_options(
-    itaox11 INTERFACE -fvisibility=hidden -fvisibility-inlines-hidden -fno-strict-aliasing
-  )
+  target_compile_options(itaox11 INTERFACE -fvisibility=hidden -fvisibility-inlines-hidden -fno-strict-aliasing)
+  target_compile_options(itaox11 INTERFACE -Wdeprecated-declarations)
   target_compile_definitions(itaox11 INTERFACE __ACE_INLINE__)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options(itaox11 INTERFACE /bigobj)
   target_compile_definitions(
-    itaox11
-    INTERFACE _CONSOLE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE
-              _CRT_NONSTDC_NO_DEPRECATE _WINSOCK_DEPRECATED_NO_WARNINGS #NO! CK ACE_AS_STATIC_LIBS
+    itaox11 INTERFACE _CONSOLE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE
+                      _CRT_NONSTDC_NO_DEPRECATE _WINSOCK_DEPRECATED_NO_WARNINGS #NO! CK ACE_AS_STATIC_LIBS
   )
   target_compile_options(
     itaox11

@@ -60,6 +60,7 @@ builddriver ruby %X11_BASE_ROOT%/bin/brix11 make --release -N %X11_BASE_ROOT% --
 if errorlevel 1 goto :error
 
 :: export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
+:: export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
 set PATH="%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%"
 cmake -B build -S . -D CMAKE_BUILD_TYPE=Release --fresh
 cmake --build build --target PACKAGE
