@@ -18,10 +18,12 @@ Before bootstrapping TAOX11 make sure you have installed the following prerequis
 [cols="<,<",options="header",]
 |=========================================
 |Prerequisite |Package name
-|ruby 2.5 or newer|ruby
-|perl version 5.10 or newer |perl
+|ruby 2.6 or newer|ruby
+|perl only v5.32 only! |perl
 |git |git
 |=========================================
+
+see https://github.com/DOCGroup/MPC/issues/191
 
 On Linux make sure you have installed the following additional prerequisites
 

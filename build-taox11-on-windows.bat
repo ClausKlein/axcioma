@@ -59,8 +59,9 @@ if errorlevel 1 goto :error
 builddriver ruby %X11_BASE_ROOT%/bin/brix11 make --release -N %X11_BASE_ROOT% -- make --release -N %TAOX11_ROOT%/examples -- make --release -N %TAOX11_ROOT%/orbsvcs/tests -- make --release -N %TAOX11_ROOT%/tests
 if errorlevel 1 goto :error
 
+:: export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
 set PATH="%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%"
-cmake -B build -S . -D CMAKE_BUILD_TYPE=Release
+cmake -B build -S . -D CMAKE_BUILD_TYPE=Release --fresh
 cmake --build build --target PACKAGE
 if errorlevel 1 goto :error
 
