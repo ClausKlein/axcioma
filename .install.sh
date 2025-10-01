@@ -24,7 +24,8 @@ make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee 
 # distclean of cmake build trees
 rm -rf ${BUILD_DIR} ${STAGE_DIR} ${INSTALL_PREFIX}/include
 
-export LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib
+# XXX export LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib
+export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
 export DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}
 # see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
 
@@ -46,14 +47,13 @@ cmake --build ${BUILD_DIR} --target all
 # install example and its runtime dependencies
 mkdir -p ${STAGE_DIR}
 
-# cmake --build ${BUILD_DIR} --target install
+# NOTE: Not used! cmake --build ${BUILD_DIR} --target install
 # # cleanup
-# #XXX rm -rf ${STAGE_DIR}/lib/ridl
 # rm -rf ${STAGE_DIR}/lib/pkgconfig
 # rm -rf ${STAGE_DIR}/bin/fuzzers
 # rm -rf ${STAGE_DIR}/bin/*.bat
 
-# path needed for Darwin
+# path to gnu-tar needed for Darwin
 export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/gnu-tar/libexec/gnubin:${PATH}"
 pushd ${BUILD_DIR} && cpack -G TGZ
 tar -C ${STAGE_DIR} -xzvf ${PWD}/itaox11-*.tar.gz --strip-components=1 \
