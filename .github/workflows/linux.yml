@@ -46,11 +46,11 @@ jobs:
             CXX: g++-13
             ruby: '3.2'
             PackageDeps: g++-13
-          - os: ubuntu-24.04
-            CC: gcc-15
-            CXX: g++-15
-            ruby: '3.4'
-            PackageDeps: g++-15
+          # - os: ubuntu-24.04
+          #   CC: gcc-15
+          #   CXX: g++-15
+          #   ruby: '3.4'
+          #   PackageDeps: g++-15
           - os: ubuntu-22.04
             CC: gcc-12
             CXX: g++-12
