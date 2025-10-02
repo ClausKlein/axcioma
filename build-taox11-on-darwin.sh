@@ -8,8 +8,8 @@ set -e
 set -u
 
 export LANG=C
-export CC=clang
-export CXX=clang++
+export CC=gcc-15
+export CXX=g++-15
 
 export WORKSPACE=$(realpath .)
 export X11_BASE_ROOT="${WORKSPACE}"
@@ -52,7 +52,7 @@ set -x
 # FIXME: "${X11_BASE_ROOT}/bin/brix11" gen build workspace.mwc -- gen build ${TAOX11_ROOT}/examples -- gen build ${TAOX11_ROOT}/orbsvcs/tests -- gen build ${TAOX11_ROOT}/tests
 ############################################################
 
-# TODO: quickfixes for OSX
+# TODO(CK): quickfixes for OSX
 # ACE/ACE/include/makeinclude/platform_gcc_clang_common.GNU
 # ACE/ACE/include/makeinclude/platform_g++_common.GNU
 # ACE/ACE/include/makeinclude/platform_clang_common.GNU
@@ -99,7 +99,7 @@ make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee 
 #XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" #XXX 2>&1 | tee -a make-all.log
 #XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" #XXX 2>&1 | tee -a make-all.log
 
-# TODO: run all tests
+# TODO(CK): run all tests
 # taox11/bin/taox11_tests.lst
 # ACE/ACE/bin/ace_tests.lst
 # ACE/ACE/tests/run_test.lst
