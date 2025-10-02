@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.25...4.1)
 # see https://cmake.org/cmake/help/latest/index.html for introduction
 #
 # cmake -B ../build -G Ninja -S .
-# DESTDIR=../stagedir cmake --install ../build --prefix /
+# DESTDIR=../installdir cmake --install ../build --prefix /
 #
 option(CMAKE_EXPORT_COMPILE_COMMANDS "for clang-tidy" ON)
 
@@ -137,11 +137,18 @@ foreach(lib_ ${TAOX11_LIBRARIES})
     ${lib_}_LIBRARY
     NAMES ${lib_} ${lib_}s ${lib_}d ${lib_}sd
     # XXX NO_DEFAULT_PATH
-    PATHS $ENV{ACE_ROOT}/lib $ENV{X11_BASE_ROOT}/lib $ENV{X11_BASE_ROOT}/stagedir/lib REQUIRED
+    PATHS $ENV{ACE_ROOT}/lib $ENV{X11_BASE_ROOT}/lib $ENV{X11_BASE_ROOT}/stagedir/lib # XXX REQUIRED
   )
-  message(STATUS "Found lib ${${lib_}_LIBRARY}")
-  list(APPEND FOUND_TAOX11_LIBRARIES ${${lib_}_LIBRARY})
-  # NOTE: this installs only symlinks witch are not usable! install(FILES ${${lib_}_LIBRARY} TYPE LIB)
+  if(${lib_}_FOUND)
+    message(STATUS "Found lib ${${lib_}_LIBRARY}")
+    list(APPEND FOUND_TAOX11_LIBRARIES ${${lib_}_LIBRARY})
+    # NOTE: this installs only symlinks witch are not usable! XXX  install(FILES ${${lib_}_LIBRARY} TYPE LIB)
+    get_filename_component(REAL_SRC "${${lib_}_LIBRARY}" REALPATH)
+    # instead file(COPY "${REAL_SRC}" DESTINATION "$ENV{STAGE_DIR}/lib/${${lib_}_LIBRARY}")
+    install(FILES ${REAL_SRC} TYPE LIB)
+  else()
+    message(WARNING "${${lib_}_LIBRARY}")
+  endif()
 endforeach()
 
 # TODO(CK): append postfix 's' for static and 'd' for debug!
@@ -221,7 +228,7 @@ endif()
 if(APPLE) # "think different", indeed! CK
   # see
   # https://opensource.apple.com/source/clang/clang-703.0.31/src/tools/clang/docs/MSVCCompatibility.rst.auto.html
-  target_compile_options(itaox11 INTERFACE -fdelayed-template-parsing -Wdeprecated-declarations)
+  target_compile_options(itaox11 INTERFACE -Wdeprecated-declarations)
   target_compile_definitions(itaox11 INTERFACE ACE_HAS_IPV6 ACE_HAS_VERSIONED_NAMESPACE=1 ACE_HAS_CUSTOM_EXPORT_MACROS=0)
   target_compile_definitions(itaox11 INTERFACE __ACE_INLINE__)
 elseif(UNIX)
@@ -270,7 +277,10 @@ install(
   PATTERN "*.cmake"
 )
 
-CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.11.2")
+#
+# gersemi: off
+#
+CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.13.0")
 
 packageProject(
   NAME itaox11
@@ -283,7 +293,7 @@ packageProject(
 
 enable_testing()
 
-if(NOT MSVC)
+if(NOT MSVC AND NOT APPLE)
   # NOTE: EXCLUDE_FROM_ALL must be OFF or targets will NOT be installed! CK
   CPMAddPackage(
     NAME Callback_Quoter
@@ -293,6 +303,9 @@ if(NOT MSVC)
     OPTIONS "CMAKE_UNITY_BUILD NO"
   )
 endif()
+#
+# gersemi: on
+#
 
 set(CPACK_GENERATOR "TGZ")
 include(CPack)
