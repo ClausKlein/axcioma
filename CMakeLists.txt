@@ -139,7 +139,7 @@ foreach(lib_ ${TAOX11_LIBRARIES})
     # XXX NO_DEFAULT_PATH
     PATHS $ENV{ACE_ROOT}/lib $ENV{X11_BASE_ROOT}/lib $ENV{X11_BASE_ROOT}/stagedir/lib # XXX REQUIRED
   )
-  if(${lib_}_FOUND)
+  if(${lib_}_LIBRARY)
     message(STATUS "Found lib ${${lib_}_LIBRARY}")
     list(APPEND FOUND_TAOX11_LIBRARIES ${${lib_}_LIBRARY})
     # NOTE: this installs only symlinks witch are not usable! XXX  install(FILES ${${lib_}_LIBRARY} TYPE LIB)

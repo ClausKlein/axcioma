@@ -26,12 +26,16 @@ set -u
 set -x
 
 # first install axcioma to ${INSTALL_PREFIX} if not yet done
-#FIXME: make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
+#FIXME:
+make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
 
 # distclean of cmake build trees
 rm -rf ${BUILD_DIR} ${STAGE_DIR} ${INSTALL_PREFIX}/include
+mkdir -p ${INSTALL_PREFIX}/bin
+mkdir -p ${INSTALL_PREFIX}/lib
+mkdir -p ${INSTALL_PREFIX}/include
 
-#FIXME: LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib
+LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib
 # TODO(CK): export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
 export DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}
 # see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
@@ -53,7 +57,6 @@ cmake -S . -B ${BUILD_DIR} -G Ninja -D CMAKE_CXX_COMPILER_LAUNCHER=${CCACHE} \
 cmake --build ${BUILD_DIR} --target all
 
 # install example and its runtime dependencies
-mkdir -p ${STAGE_DIR}/lib
 
 # NOTE: Not used! cmake --build ${BUILD_DIR} --target install
 # # cleanup
