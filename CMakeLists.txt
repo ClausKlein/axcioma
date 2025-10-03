@@ -123,12 +123,6 @@ set(TAOX11_LIBRARIES
     x11_logger
 )
 
-target_link_libraries(itaox11 INTERFACE ${TAOX11_LIBRARIES})
-# use original libs:
-target_link_directories(
-  itaox11 INTERFACE $<BUILD_INTERFACE:$ENV{X11_BASE_ROOT}/stagedir/lib>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}>
-)
 target_compile_features(itaox11 INTERFACE cxx_std_17)
 
 message(TRACE "X11_BASE_ROOT=$ENV{X11_BASE_ROOT}")
@@ -137,23 +131,25 @@ foreach(lib_ ${TAOX11_LIBRARIES})
     ${lib_}_LIBRARY
     NAMES ${lib_} ${lib_}s ${lib_}d ${lib_}sd
     # XXX NO_DEFAULT_PATH
-    PATHS $ENV{ACE_ROOT}/lib $ENV{X11_BASE_ROOT}/lib $ENV{X11_BASE_ROOT}/stagedir/lib # XXX REQUIRED
+    PATHS $ENV{ACE_ROOT}/lib $ENV{X11_BASE_ROOT}/lib $ENV{X11_BASE_ROOT}/stagedir/lib
+    # XXX REQUIRED
   )
   if(${lib_}_LIBRARY)
     message(STATUS "Found lib ${${lib_}_LIBRARY}")
-    list(APPEND FOUND_TAOX11_LIBRARIES ${${lib_}_LIBRARY})
-    # NOTE: this installs only symlinks witch are not usable! XXX  install(FILES ${${lib_}_LIBRARY} TYPE LIB)
+    list(APPEND FOUND_TAOX11_LIBRARIES ${lib_})
+    # NOTE: this installs only symlinks witch are not usable! XXX install(FILES ${${lib_}_LIBRARY} TYPE LIB)
     get_filename_component(REAL_SRC "${${lib_}_LIBRARY}" REALPATH)
-    # instead file(COPY "${REAL_SRC}" DESTINATION "$ENV{STAGE_DIR}/lib/${${lib_}_LIBRARY}")
-    install(FILES ${REAL_SRC} TYPE LIB)
+    get_filename_component(REAL_NAME "${${lib_}_LIBRARY}" NAME)
+    message(TRACE "copy to $ENV{X11_BASE_ROOT}/stagedir/lib/${REAL_NAME}")
+    #NOTE: NO! XXX file(INSTALL "${${lib_}_LIBRARY}" DESTINATION "$ENV{X11_BASE_ROOT}/stagedir/lib" FOLLOW_SYMLINK_CHAIN)
   else()
     message(WARNING "${${lib_}_LIBRARY}")
   endif()
 endforeach()
 
 # TODO(CK): append postfix 's' for static and 'd' for debug!
-target_link_libraries(itaox11 INTERFACE ${TAOX11_LIBRARIES})
-# use original libs:
+# NOTE: if we use the original libs: target_link_libraries(itaox11 INTERFACE ${TAOX11_LIBRARIES})
+target_link_libraries(itaox11 INTERFACE ${FOUND_TAOX11_LIBRARIES})
 target_link_directories(
   itaox11 INTERFACE $<BUILD_INTERFACE:$ENV{ACE_ROOT}/lib> $<BUILD_INTERFACE:$ENV{X11_BASE_ROOT}/lib>
   $<BUILD_INTERFACE:$ENV{X11_BASE_ROOT}/stagedir/lib> $<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}>
@@ -293,12 +289,12 @@ packageProject(
 
 enable_testing()
 
-if(NOT MSVC AND NOT APPLE)
+if(NOT MSVC AND NOT MSYS)
   # NOTE: EXCLUDE_FROM_ALL must be OFF or targets will NOT be installed! CK
   CPMAddPackage(
     NAME Callback_Quoter
     GITHUB_REPOSITORY "ClausKlein/Callback_Quoter"
-    GIT_TAG 6e4b1f50e70a2ee8e224bf1b176a915053f8e8d6
+    GIT_TAG v0.1.1
     EXCLUDE_FROM_ALL OFF
     OPTIONS "CMAKE_UNITY_BUILD NO"
   )

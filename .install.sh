@@ -26,8 +26,7 @@ set -u
 set -x
 
 # first install axcioma to ${INSTALL_PREFIX} if not yet done
-#FIXME:
-make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
+#FIXME: make -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" install 2>&1 | tee make-install.log
 
 # distclean of cmake build trees
 rm -rf ${BUILD_DIR} ${STAGE_DIR} ${INSTALL_PREFIX}/include
@@ -35,7 +34,7 @@ mkdir -p ${INSTALL_PREFIX}/bin
 mkdir -p ${INSTALL_PREFIX}/lib
 mkdir -p ${INSTALL_PREFIX}/include
 
-LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib
+#FIXME: LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib
 # TODO(CK): export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
 export DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}
 # see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
@@ -67,7 +66,7 @@ cmake --build ${BUILD_DIR} --target all
 # path to gnu-tar needed for Darwin
 export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/gnu-tar/libexec/gnubin:${PATH}"
 pushd ${BUILD_DIR} && cpack -G TGZ
-tar -C ${STAGE_DIR} -xzvf ${PWD}/itaox11-*.tar.gz --strip-components=1 \
+tar -C ${STAGE_DIR} -xzf ${PWD}/itaox11-*.tar.gz --strip-components=1 \
     --exclude="*.a" --exclude="*.bat" --exclude=fuzzers --exclude=pkgconfig
 popd
 
