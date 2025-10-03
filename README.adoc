@@ -18,12 +18,20 @@ Before bootstrapping TAOX11 make sure you have installed the following prerequis
 [cols="<,<",options="header",]
 |=========================================
 |Prerequisite |Package name
-|ruby 2.5 or newer|ruby
-|perl version 5.10 or newer |perl
+|ruby 2.6 or newer|ruby
+|perl only v5.32 only! |perl
 |git |git
+|=========================================
+
+see https://github.com/DOCGroup/MPC/issues/191
+
+On Linux make sure you have installed the following additional prerequisites
+
+[cols="<,<",options="header",]
+|=========================================
+|Prerequisite |Package name
 |gcc version 11 or newer |gcc
 |g++ version 11 or newer |gcc-c++
-|xerces-c++ version 3.0 or newer |xerces-c
 |GNU make version 3.81 or newer |make
 |GNU Bash|bash
 |=========================================
@@ -86,5 +94,5 @@ document (under `docs/html/taox11` for TAOX11).
 
 == Building formal releases
 
-To get and build a formal release either checkout a formal release tag after cloning this repository or download and install a formal release source package of this repository.
+To obtain and build a formal release either checkout a formal release tag after cloning this repository or download and install a formal release source package of this repository.
 From there just follow the regular build steps outlined above. The bootstrap procedure will automatically pull in the right versions of the dependent git repositories.

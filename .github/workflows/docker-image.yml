@@ -1,0 +1,20 @@
+name: Docker Image CI build with clang-17 on ubuntu-latest
+
+on:
+  push:
+    branches:
+    - "develop"
+    - "master"
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file .devcontainer/Dockerfile --tag my-image-name:$(date +%s)
