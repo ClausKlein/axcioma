@@ -260,7 +260,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
               /ZI
               /Gm-
               /nologo
-              /Ob1
+              # XXX /Ob1
   )
   target_link_options(itaox11 INTERFACE /FORCE:MULTIPLE)
 endif()
@@ -289,7 +289,7 @@ packageProject(
 
 enable_testing()
 
-if(NOT MSVC AND NOT MSYS)
+if(NOT CYGWIN AND NOT MSYS)
   # NOTE: EXCLUDE_FROM_ALL must be OFF or targets will NOT be installed! CK
   CPMAddPackage(
     NAME Callback_Quoter

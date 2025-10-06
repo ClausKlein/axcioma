@@ -11,12 +11,14 @@ export BUILD_DIR=${PWD}/build
 export STAGE_DIR=${PWD}/install
 export CCACHE=`which ccache`
 
+pipx environment
 pipx install clang-tidy && \
 pipx install clang-format && \
 pipx install cmake-format && \
 pipx install cmake && \
 pipx install ninja && \
 pipx install builddriver
+pipx ensurepath
 
 cat configure.log
 #TODO(CK): builddriver cat make-all.log
@@ -30,6 +32,7 @@ set -x
 
 # distclean of cmake build trees
 rm -rf ${BUILD_DIR} ${STAGE_DIR} ${INSTALL_PREFIX}/include
+mkdir -p ${STAGE_DIR}
 mkdir -p ${INSTALL_PREFIX}/bin
 mkdir -p ${INSTALL_PREFIX}/lib
 mkdir -p ${INSTALL_PREFIX}/include
@@ -38,6 +41,13 @@ mkdir -p ${INSTALL_PREFIX}/include
 # TODO(CK): export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
 export DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}
 # see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
+
+which cmake
+cmake --version
+which ninja
+ninja --version
+which perl
+perl --version
 
 cmake -S . -B ${BUILD_DIR} -G Ninja -D CMAKE_CXX_COMPILER_LAUNCHER=${CCACHE} \
   -D CMAKE_BUILD_TYPE=Release \

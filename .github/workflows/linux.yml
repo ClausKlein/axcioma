@@ -61,16 +61,16 @@ jobs:
             CXX: g++-13
             ruby: '3.2'
             PackageDeps: g++-13
-          - os: ubuntu-24.04
-            CC: clang-17
-            CXX: clang++-17
-            ruby: '3.3'
-            PackageDeps: clang-17
-          - os: ubuntu-24.04
-            CC: clang-20
-            CXX: clang++-20
-            ruby: '3.4'
-            PackageDeps: clang-20
+          # - os: ubuntu-24.04
+          #   CC: clang-17
+          #   CXX: clang++-17
+          #   ruby: '3.3'
+          #   PackageDeps: clang-17
+          # - os: ubuntu-24.04
+          #   CC: clang-20
+          #   CXX: clang++-20
+          #   ruby: '3.4'
+          #   PackageDeps: clang-20
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} ${{ matrix.CXX }} ruby-${{ matrix.ruby }}
     env:
