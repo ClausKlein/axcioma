@@ -1,4 +1,4 @@
-name: GCC
+name: GCC-15/16
 
 on:
   push:
@@ -22,31 +22,34 @@ jobs:
       image: ghcr.io/mattkretz/cplusplus-ci/gcc${{ matrix.version }}
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.13" }
-
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
-          cmake: 4.0.3
-          ninja: 1.13.0
-          gcovr: true
+          python-version: '3.13'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
+
+      # - name: Setup Cpp
+      #   uses: aminya/setup-cpp@v1
+      #   with:
+      #     cmake: 4.1.2
+      #     ninja: 1.13.0
+      #     gcovr: true
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2
+          ruby-version: 3.3
 
       - name: Install symlinks
-        run: apt-get update -q
-          && apt-get install -q -y symlinks python-is-python3
-
-      - name: Install Python modules via pip
         run: |
-          python -m venv .venv
-          . .venv/bin/activate
-          pip install -r requirements.txt
+          apt-get update -q
+          apt-get install -q -y symlinks # python-is-python3
+
+      # - name: Install Python modules via pip
+      #   run: |
+      #     python -m venv .venv
+      #     . .venv/bin/activate
+      #     pip install -r requirements.txt
 
       - name: Run test suite
         env:
@@ -54,5 +57,5 @@ jobs:
           CXX: g++
           PATH: $HOME/.local/bin:$PATH
         run: |
-          . .venv/bin/activate
+          # . .venv/bin/activate
           ./build-taox11-on-linux.sh
