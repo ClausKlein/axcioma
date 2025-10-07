@@ -39,18 +39,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # - os: windows-2025
+          #   ruby: '3.1'
+          #   project_type: vs2022
+          #   make_flags: '--release'
+          #   cmake_build_type: 'Release'
           - os: windows-2025
-            ruby: '2.6'
-            project_type: vs2022
-            make_flags: '--release'
-          - os: windows-2025
-            ruby: '3.1'
+            ruby: '3.2'
             project_type: vs2022
             make_flags: '--debug'
+            cmake_build_type: 'Debug'
           - os: windows-2025
-            ruby: '3.1'
+            ruby: '3.3'
             project_type: vs2022
             make_flags: '--release'
+            cmake_build_type: 'Release'
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} ruby-${{ matrix.ruby }} ${{ matrix.project_type }} ${{ matrix.make_flags }}
     steps:
@@ -110,4 +113,11 @@ jobs:
     - name: Run brix11 make
       run: |
         %X11_BASE_ROOT%/bin/brix11 make ${{ matrix.make_flags }} -N %X11_BASE_ROOT% -- make ${{ matrix.make_flags }} -N %TAOX11_ROOT%/examples -- make ${{ matrix.make_flags }} -N %TAOX11_ROOT%/orbsvcs/tests -- make ${{ matrix.make_flags }} -N %TAOX11_ROOT%/tests
+      shell: cmd
+    - name: Run cmake install
+      run: |
+        set PATH=%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%
+        %X11_BASE_ROOT%/bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DCMAKE_SKIP_TEST_ALL_DEPENDENCY=OFF --fresh
+        && %X11_BASE_ROOT%/bin/brix11 execute cmake --build build --target test
+        && %X11_BASE_ROOT%/bin/brix11 execute cmake --build build --target package
       shell: cmd

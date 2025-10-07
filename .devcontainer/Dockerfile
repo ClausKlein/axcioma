@@ -7,7 +7,8 @@ RUN apt-get update -qq && \
     # install nodejs and ruby-rubygems
     apt-get install -y --no-install-recommends direnv \
         libxerces-c-dev libssl-dev libzmq3-dev libbz2-dev \
-        git ruby-rubygems nodejs npm busybox symlinks pipx && \
+        git ruby-rubygems nodejs npm busybox symlinks \
+        pipx python3-pip python-is-python3 && \
     gem install asciidoctor:2.0.23 coderay && \
     # install setup-cpp
     npm install -g setup-cpp@v1.7.1 && \

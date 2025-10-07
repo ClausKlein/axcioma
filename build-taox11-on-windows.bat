@@ -48,11 +48,13 @@ if "%VCINSTALLDIR%"=="" (
   )
 )
 
-ruby %X11_BASE_ROOT%/bin/brix11 -t vs2022 configure -W aceroot=%ACE_ROOT% -W taoroot=%TAO_ROOT% -W mpcroot=%MPC_ROOT%
+REM call bin\brix11 configure --bits=64
+ruby %X11_BASE_ROOT%/bin/brix11 -t vs2022 configure --bits=64 -W aceroot=%ACE_ROOT% -W taoroot=%TAO_ROOT% -W mpcroot=%MPC_ROOT%
 ruby %X11_BASE_ROOT%/bin/brix11 env -- configure -P > configure.log
 type configure.log
 ruby bin/brix11 env > .setenv.bat
 
+REM call bin\brix11 gen build --static workspace.mwc
 builddriver ruby %X11_BASE_ROOT%/bin/brix11 gen build workspace.mwc -- gen build %TAOX11_ROOT%/examples -- gen build %TAOX11_ROOT%/orbsvcs/tests -- gen build %TAOX11_ROOT%/tests
 if errorlevel 1 goto :error
 
@@ -61,9 +63,18 @@ if errorlevel 1 goto :error
 
 :: export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
 :: export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
-set PATH="%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%"
-cmake -B build -S . -D CMAKE_BUILD_TYPE=Release --fresh
-cmake --build build --target PACKAGE
+set PATH=%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%
+where python
+python -m pip install -r requirements.txt
+where perl cmake ninja
+
+ruby bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=Release -DCMAKE_SKIP_TEST_ALL_DEPENDENCY=OFF --fresh
+if errorlevel 1 goto :error
+
+ruby bin/brix11 execute cmake --build build --target test
+if errorlevel 1 goto :error
+
+ruby bin/brix11 execute cmake --build build --target package
 if errorlevel 1 goto :error
 
 goto :end

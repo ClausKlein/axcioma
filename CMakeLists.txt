@@ -156,7 +156,7 @@ target_link_directories(
 )
 
 # NOTE: install all libs, more than yet used, but with symlinks to dll's! CK
-if(UNIX)
+if(APPLE)
   install(DIRECTORY $ENV{X11_BASE_ROOT}/stagedir/lib/ TYPE LIB)
 else()
   install(DIRECTORY $ENV{ACE_ROOT}/lib/ TYPE LIB)
@@ -186,8 +186,8 @@ install(
 # ├── ridl
 # └── x86_64-linux-gnu
 #     ├── cmake
-#     │   ├── idl2cpp
-#     │   └── itaox11
+#     │   ├── idl2cpp
+#     │   └── itaox11
 #     ├── idl2cpp
 #     └── pkgconfig
 
@@ -196,7 +196,7 @@ install(
   TYPE BIN
   USE_SOURCE_PERMISSIONS
 )
-if(UNIX)
+if(APPLE)
   install(
     DIRECTORY $ENV{X11_BASE_ROOT}/stagedir/bin/
     TYPE BIN

@@ -1,0 +1,58 @@
+name: GCC
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ develop ]
+  workflow_dispatch:
+  schedule:
+    - cron: '30 15 * * 6'
+
+jobs:
+  gcc:
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [15, 16]
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/mattkretz/cplusplus-ci/gcc${{ matrix.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          cmake: 4.0.3
+          ninja: 1.13.0
+          gcovr: true
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: Install symlinks
+        run: apt-get update -q
+          && apt-get install -q -y symlinks python-is-python3
+
+      - name: Install Python modules via pip
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run test suite
+        env:
+          CC: gcc
+          CXX: g++
+          PATH: $HOME/.local/bin:$PATH
+        run: |
+          . .venv/bin/activate
+          ./build-taox11-on-linux.sh
