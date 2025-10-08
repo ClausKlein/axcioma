@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.25...4.1)
 # cmake -B ../build -G Ninja -S .
 # DESTDIR=../installdir cmake --install ../build --prefix /
 #
-option(CMAKE_EXPORT_COMPILE_COMMANDS "for clang-tidy" ON)
+option(CMAKE_EXPORT_COMPILE_COMMANDS "for clang-tidy" YES)
 
 project(
   itaox11
@@ -260,7 +260,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
               /ZI
               /Gm-
               /nologo
-              # XXX /Ob1
   )
   target_link_options(itaox11 INTERFACE /FORCE:MULTIPLE)
 endif()

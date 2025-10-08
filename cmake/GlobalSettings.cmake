@@ -7,21 +7,24 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
   option(CMAKE_CXX_STANDARD_REQUIRED "" YES)
 endif()
 
-# NOTE: only for MSVC build shared libs (DLL)
+# NOTE: only for MSVC shared libs (DLL) should be build?
 include(CMakeDependentOption)
-cmake_dependent_option(BUILD_SHARED_LIBS "Build shared instead of static library" YES "MSVC" NO)
-
+# NO! cmake_dependent_option(BUILD_SHARED_LIBS "Build shared instead of static library" YES "MSVC" NO)
 option(BUILD_SHARED_LIBS "Build shared Libraries" YES)
+
 option(USE_POSTFIX "Use postfix for debug" YES)
 if(USE_POSTFIX)
   set(CMAKE_DEBUG_POSTFIX d)
 endif()
+
 if(UNIX AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   set(CMAKE_DEPFILE_FLAGS_C "-MMD -MT <DEP_TARGET> -MF <DEP_FILE>")
   set(CMAKE_DEPFILE_FLAGS_CXX "-MMD -MT <DEP_TARGET> -MF <DEP_FILE>")
 endif()
-set(CMAKE_SKIP_TEST_ALL_DEPENDENCY OFF)
+
+set(CMAKE_SKIP_TEST_ALL_DEPENDENCY NO)
 set(CMAKE_INSTALL_MESSAGE LAZY)
+set(ENV{CTEST_OUTPUT_ON_FAILURE) YES)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
