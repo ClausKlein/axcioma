@@ -11,10 +11,6 @@ export LANG=C
 export CC=gcc-15
 export CXX=g++-15
 
-export WORKSPACE=$(realpath .)
-export X11_BASE_ROOT="${WORKSPACE}"
-export INSTALL_PREFIX="${X11_BASE_ROOT}/stagedir"
-
 source .envrc
 
 export LLVM_PREFIX=`brew --prefix llvm@21`
