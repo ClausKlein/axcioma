@@ -35,7 +35,7 @@ set -x
 # includes $ACE_ROOT/include/makeinclude/platform_g++_common.GNU
 # includes $ACE_ROOT/include/makeinclude/platform_clang_common.GNU
 # includes $ACE_ROOT/include/makeinclude/platform_linux_common.GNU
-echo "c++std=c++17" >> ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
+echo "c++std=c++20" >> ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
 
 # Print brix11 configuration
 "${X11_BASE_ROOT}/bin/brix11" --version
@@ -49,10 +49,10 @@ echo "c++std=c++17" >> ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
 ############################################################
 
 # make all
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee make-all.log
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" 2>&1 | tee -a make-all.log
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" 2>&1 | tee -a make-all.log
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | tee -a make-all.log
+make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee make-all.log
+make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" 2>&1 | tee -a make-all.log
+make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" 2>&1 | tee -a make-all.log
+make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | tee -a make-all.log
 
 # TODO(CK): run tests, but only on WSL2 without windows firerwall!
 # taox11/bin/taox11_tests.lst
@@ -69,7 +69,7 @@ make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | 
 # rm -rf "${INSTALL_PREFIX}/include"
 
 export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
-export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
+export LD_LIBRARY_PATH="${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib"
 
 (type cmake && type ninja) || python -m pip install -r requirements.txt
 builddriver cat make-all.log || echo ignored
@@ -83,15 +83,18 @@ bin/brix11 execute cmake -B build -S . -G Ninja \
   -D CMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
   -D CMAKE_STAGING_PREFIX=${INSTALL_PREFIX} \
   -D CMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
-  -D CMAKE_CXX_STANDARD=17 \
+  -D CMAKE_CXX_STANDARD=20 \
   -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated \
-  -D CMAKE_SKIP_TEST_ALL_DEPENDENCY=OFF \
   --fresh
 
+bin/brix11 execute cmake --build build --target all
+bin/brix11 execute cmake --install build --prefix ${INSTALL_PREFIX}
+
+# check that all needed libs are installed:
+export LD_LIBRARY_PATH="${STAGE_DIR}/lib:/usr/local/lib:/usr/lib"
+export PATH="${STAGE_DIR}/bin:${PATH}"
 bin/brix11 execute cmake --build build --target test
 
 bin/brix11 execute cmake --build build --target package
-
-# XXX ./.install.sh
 
 exit 0

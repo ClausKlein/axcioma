@@ -1,7 +1,7 @@
 #### Base Image
 # usage:
 # docker build -f ./.devcontainer/Dockerfile --tag=devcontainer:latest .
-FROM ubuntu:24.04 as setup-cpp-ubuntu
+FROM ubuntu:24.04 AS setup-cpp-ubuntu
 
 RUN apt-get update -qq && \
     # install nodejs and ruby-rubygems
@@ -41,10 +41,10 @@ COPY . .
 # Build project
 RUN bash -c 'source ~/.cpprc && ./build-taox11-on-linux.sh'
 
-ENV CC gcc
-ENV CXX g++
-ENV BRIX11_NUMBER_OF_PROCESSORS 6
-ENV BRIX11_VERBOSE 2
+ENV CC=gcc
+ENV CXX=g++
+ENV BRIX11_NUMBER_OF_PROCESSORS=6
+ENV BRIX11_VERBOSE=2
 
 # for interactive tests
 ENTRYPOINT ["/bin/bash"]

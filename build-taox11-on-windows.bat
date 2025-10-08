@@ -21,6 +21,7 @@ set MPC_ROOT=%X11_BASE_ROOT%\ACE\MPC
 set RIDL_BE_PATH=;%TAOX11_ROOT%
 set RIDL_BE_SELECT=c++11
 set RIDL_ROOT=%X11_BASE_ROOT%\ridl\lib
+set INSTALL_PREFIX=%X11_BASE_ROOT%\stagedir
 REM ###############################################################
 
 where ruby python perl cmake git
@@ -61,16 +62,19 @@ if errorlevel 1 goto :error
 builddriver ruby %X11_BASE_ROOT%/bin/brix11 make --release -N %X11_BASE_ROOT% -- make --release -N %TAOX11_ROOT%/examples -- make --release -N %TAOX11_ROOT%/orbsvcs/tests -- make --release -N %TAOX11_ROOT%/tests
 if errorlevel 1 goto :error
 
-:: export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
-:: export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
 set PATH=%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%
 where python
 python -m pip install -r requirements.txt
 where perl cmake ninja
 
-ruby bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=Release -DCMAKE_SKIP_TEST_ALL_DEPENDENCY=OFF --fresh
+ruby bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=Release -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated --fresh
 if errorlevel 1 goto :error
 
+ruby bin/brix11 execute cmake --build build --target all
+ruby bin/brix11 execute cmake --install build --prefix %INSTALL_PREFIX%
+if errorlevel 1 goto :error
+
+set PATH=%INSTALL_PREFIX%\bin:${PATH}
 ruby bin/brix11 execute cmake --build build --target test
 if errorlevel 1 goto :error
 

@@ -1,4 +1,4 @@
-name: Docker Image CI build with clang-17 on ubuntu-latest
+name: Docker Image CI build on ubuntu-latest
 
 on:
   push:
@@ -13,6 +13,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
 
     steps:
     - uses: actions/checkout@v4

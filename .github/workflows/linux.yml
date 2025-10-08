@@ -31,6 +31,7 @@ env:
   X11_BASE_ROOT: ${{ github.workspace }}
   RIDL_ROOT: ${{ github.workspace }}/ridl
   TAOX11_ROOT: ${{ github.workspace }}/taox11
+  INSTALL_PREFIX: ${{ github.workspace }}/stagedir
   X11_BRANCH: master
   ACETAOMPC_BRANCH: ACE+TAO-8_0_5
 
@@ -43,7 +44,7 @@ jobs:
           - os: ubuntu-24.04
             CC: gcc-13
             CXX: g++-13
-            ruby: '3.2'
+            ruby: '3.3'
             PackageDeps: g++-13
           # - os: ubuntu-24.04
           #   CC: gcc-15
@@ -110,11 +111,6 @@ jobs:
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-    - name: Add repository ${{ matrix.Repo }}
-      if: matrix.Repo != ''
-      run:
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
-        sudo apt-add-repository "deb http://apt.llvm.org/$(lsb_release -cs)/ ${{ matrix.Repo }} main"
     - name: Add packages
       run: |
         sudo apt-get --yes update
@@ -131,6 +127,21 @@ jobs:
     - name: Run brix11 make
       run: |
         $X11_BASE_ROOT/bin/brix11 make -N $X11_BASE_ROOT -- make -N $TAOX11_ROOT/examples -- make -N $TAOX11_ROOT/orbsvcs/tests -- make -N $TAOX11_ROOT/tests
+    - name: Run cmake install
+      run: |
+        export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
+        export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
+        $X11_BASE_ROOT/bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=Release -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated
+        $X11_BASE_ROOT/bin/brix11 execute cmake --build build --target all
+        $X11_BASE_ROOT/bin/brix11 execute cmake --install build --prefix ${INSTALL_PREFIX}
+    - name: Run ctest
+      run: |
+        export PATH="${INSTALL_PREFIX}/bin:${PATH}"
+        export LD_LIBRARY_PATH="${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib"
+        $X11_BASE_ROOT/bin/brix11 execute cmake --build build --target test
+    - name: Run cpack
+      run: |
+        $X11_BASE_ROOT/bin/brix11 execute cmake --build build --target package
     - name: Install necessary ruby gems
       run: |
         gem install asciidoctor:2.0.15 coderay

@@ -30,6 +30,7 @@ env:
   X11_BASE_ROOT: ${{ github.workspace }}
   RIDL_ROOT: ${{ github.workspace }}/ridl
   TAOX11_ROOT: ${{ github.workspace }}/taox11
+  INSTALL_PREFIX: ${{ github.workspace }}/stagedir
   X11_BRANCH: master
   ACETAOMPC_BRANCH: ACE+TAO-8_0_5
 
@@ -117,7 +118,16 @@ jobs:
     - name: Run cmake install
       run: |
         set PATH=%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%
-        %X11_BASE_ROOT%/bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DCMAKE_SKIP_TEST_ALL_DEPENDENCY=OFF --fresh
-        && %X11_BASE_ROOT%/bin/brix11 execute cmake --build build --target test
-        && %X11_BASE_ROOT%/bin/brix11 execute cmake --build build --target package
+        %X11_BASE_ROOT%\bin\brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated
+        %X11_BASE_ROOT%\bin\brix11 execute cmake --build build --target all
+        %X11_BASE_ROOT%\bin\brix11 execute cmake --install build --prefix %INSTALL_PREFIX%
+      shell: cmd
+    - name: Run ctest
+      run: |
+        set PATH=%INSTALL_PREFIX%\bin:${PATH}
+        %X11_BASE_ROOT%\bin\brix11 execute cmake --build build --target test
+      shell: cmd
+    - name: Run cpack
+      run: |
+        %X11_BASE_ROOT%\bin\brix11 execute cmake --build build --target package
       shell: cmd

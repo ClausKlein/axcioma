@@ -37,9 +37,9 @@ mkdir -p ${INSTALL_PREFIX}/bin
 mkdir -p ${INSTALL_PREFIX}/lib
 mkdir -p ${INSTALL_PREFIX}/include
 
-#FIXME: LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib
-# TODO(CK): export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
-export DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+#FIXME: LD_LIBRARY_PATH="${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib"
+# TODO(CK): export LD_LIBRARY_PATH="${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib"
+export DYLD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 # see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
 
 which cmake
@@ -60,7 +60,6 @@ cmake -S . -B ${BUILD_DIR} -G Ninja -D CMAKE_CXX_COMPILER_LAUNCHER=${CCACHE} \
   -D CMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
   -D CMAKE_CXX_STANDARD=17 \
   -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated \
-  -D CMAKE_SKIP_TEST_ALL_DEPENDENCY=OFF \
   --fresh
 
 # build example
@@ -91,8 +90,8 @@ do
 done
 
 # check that all needed libs are installed:
-export LD_LIBRARY_PATH=${STAGE_DIR}/lib:/usr/local/lib:/usr/lib
-export DYLD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH="${STAGE_DIR}/lib:/usr/local/lib:/usr/lib"
+export DYLD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 if [[ -x "${STAGE_DIR}/bin/consumer" ]]; then
   ldd ${STAGE_DIR}/bin/consumer || objdump --dylibs-used --macho ${STAGE_DIR}/bin/consumer
 fi
