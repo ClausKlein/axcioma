@@ -3,9 +3,9 @@ include_guard(GLOBAL)
 # require a C++ standard
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
-  option(CMAKE_CXX_EXTENSIONS "" NO)
-  option(CMAKE_CXX_STANDARD_REQUIRED "" YES)
 endif()
+option(CMAKE_CXX_EXTENSIONS "" NO)
+option(CMAKE_CXX_STANDARD_REQUIRED "" YES)
 
 # NOTE: only for MSVC shared libs (DLL) should be build?
 include(CMakeDependentOption)
