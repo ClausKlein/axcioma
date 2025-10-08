@@ -79,7 +79,7 @@ bin/brix11 execute cmake -B build -S . -G Ninja \
   -D CMAKE_STAGING_PREFIX=${INSTALL_PREFIX} \
   -D CMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
   -D CMAKE_CXX_STANDARD=20 \
-  -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated \
+  -D BUILD_SHARED_LIBS=OFF -Wdev -Wdeprecated \
   --fresh
 
 bin/brix11 execute cmake --build build --target all

@@ -67,7 +67,7 @@ where python
 python -m pip install -r requirements.txt
 where perl cmake ninja
 
-ruby bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=Release -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated --fresh
+ruby bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=Release -D BUILD_SHARED_LIBS=OFF -Wdev -Wdeprecated --fresh
 if errorlevel 1 goto :error
 
 ruby bin/brix11 execute cmake --build build --target all

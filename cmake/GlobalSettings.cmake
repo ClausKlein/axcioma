@@ -10,7 +10,7 @@ option(CMAKE_CXX_STANDARD_REQUIRED "" YES)
 # NOTE: only for MSVC shared libs (DLL) should be build?
 include(CMakeDependentOption)
 # NO! cmake_dependent_option(BUILD_SHARED_LIBS "Build shared instead of static library" YES "MSVC" NO)
-option(BUILD_SHARED_LIBS "Build shared Libraries" YES)
+option(BUILD_SHARED_LIBS "Build shared Libraries" NO)
 
 option(USE_POSTFIX "Use postfix for debug" YES)
 if(USE_POSTFIX)

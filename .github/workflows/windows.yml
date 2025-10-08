@@ -117,10 +117,13 @@ jobs:
       shell: cmd
     - name: Run cmake install
       run: |
+        @echo on
         set PATH=%X11_BASE_ROOT%\bin;%X11_BASE_ROOT%\lib;%TAOX11_ROOT%\bin;%ACE_ROOT%\bin;%ACE_ROOT%\lib;%PATH%
-        %X11_BASE_ROOT%\bin\brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -D BUILD_SHARED_LIBS=ON -Wdev -Wdeprecated
-        %X11_BASE_ROOT%\bin\brix11 execute cmake --build build --target all
-        %X11_BASE_ROOT%\bin\brix11 execute cmake --install build --prefix %INSTALL_PREFIX%
+        set CC=cl
+        set CXX=CL
+        call %X11_BASE_ROOT%\bin\brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -D BUILD_SHARED_LIBS=OFF -Wdev -Wdeprecated || exit /b 1
+        call %X11_BASE_ROOT%\bin\brix11 execute cmake --build build --target all || exit /b 1
+        call %X11_BASE_ROOT%\bin\brix11 execute cmake --install build --prefix %INSTALL_PREFIX% || exit /b 1
       shell: cmd
     - name: Run ctest
       run: |
