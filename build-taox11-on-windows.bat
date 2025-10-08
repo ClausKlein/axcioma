@@ -74,7 +74,7 @@ ruby bin/brix11 execute cmake --build build --target all
 ruby bin/brix11 execute cmake --install build --prefix %INSTALL_PREFIX%
 if errorlevel 1 goto :error
 
-set PATH=%INSTALL_PREFIX%\bin:${PATH}
+set PATH=%INSTALL_PREFIX%\bin;%PATH%
 ruby bin/brix11 execute cmake --build build --target test
 if errorlevel 1 goto :error
 

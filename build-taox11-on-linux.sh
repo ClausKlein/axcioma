@@ -67,7 +67,7 @@ make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" 2>&1 | 
 export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
 export LD_LIBRARY_PATH="${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib"
 
-(type cmake && type ninja) || python -m pip install -r requirements.txt && builddriver cat make-all.log
+(type cmake && type ninja) || (python -m pip install -r requirements.txt && builddriver cat make-all.log)
 
 bin/brix11 execute cmake -B build -S . -G Ninja \
   -D CMAKE_BUILD_TYPE=Release \
