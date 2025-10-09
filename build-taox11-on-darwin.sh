@@ -17,7 +17,7 @@ export LLVM_PREFIX=`brew --prefix llvm@21`
 export LLVM_ROOT=`realpath ${LLVM_PREFIX}`
 # for clang-tools
 export PATH=${LLVM_ROOT}/bin:${PATH}
-export PATH="/usr/local/Cellar/ruby/3.4.6/bin:$PATH"
+export PATH="/usr/local/Cellar/ruby/3.4.6_1/bin:$PATH"
 
 # XXX export CXX=${LLVM_ROOT}/bin/clang++
 # XXX export CC=${LLVM_ROOT}/bin/clang
@@ -71,7 +71,7 @@ platform_file='include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU'
 echo '#include "ace/config-macosx.h"' > "${ACE_ROOT}/ace/config.h"
 
 # create ACE/ACE/include/makeinclude/platform_macros.GNU
-echo "c++std=c++17" > ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
+echo "c++std=c++20" > ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
 echo ${platform_file} >> ${ACE_ROOT}/include/makeinclude/platform_macros.GNU
 
 # ACE/ACE/bin/MakeProjectCreator/config/default.features
@@ -90,10 +90,10 @@ perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/tests" -workers ${
 perl "${TAOX11_ROOT}/bin/mwc.pl" -type gnuace "${TAOX11_ROOT}/orbsvcs/tests" -workers ${BRIX11_NUMBER_OF_PROCESSORS}
 
 # make all
-make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee make-all.log
-#XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" #XXX 2>&1 | tee -a make-all.log
-#XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" #XXX 2>&1 | tee -a make-all.log
-#XXX make c++17=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" #XXX 2>&1 | tee -a make-all.log
+make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${X11_BASE_ROOT}" 2>&1 | tee make-all.log
+#XXX make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/examples" #XXX 2>&1 | tee -a make-all.log
+#XXX make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/tests" #XXX 2>&1 | tee -a make-all.log
+#XXX make c++20=1 -j ${BRIX11_NUMBER_OF_PROCESSORS} -C "${TAOX11_ROOT}/orbsvcs/tests" #XXX 2>&1 | tee -a make-all.log
 
 # TODO(CK): run all tests
 # taox11/bin/taox11_tests.lst
