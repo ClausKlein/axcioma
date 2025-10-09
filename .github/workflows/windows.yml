@@ -128,7 +128,7 @@ jobs:
     - name: Run ctest
       run: |
         set PATH=%INSTALL_PREFIX%\bin;%PATH%
-        %X11_BASE_ROOT%\bin\brix11 execute cmake --build build --target test
+        %X11_BASE_ROOT%\bin\brix11 execute ctest --test-dir build --output-on-failure
       shell: cmd
     - name: Run cpack
       run: |

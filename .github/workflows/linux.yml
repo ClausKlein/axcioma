@@ -138,7 +138,7 @@ jobs:
       run: |
         export PATH="${INSTALL_PREFIX}/bin:${PATH}"
         export LD_LIBRARY_PATH="${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib"
-        $X11_BASE_ROOT/bin/brix11 execute cmake --build build --target test
+        $X11_BASE_ROOT/bin/brix11 execute ctest --test-dir build --output-on-failure
     - name: Run cpack
       run: |
         $X11_BASE_ROOT/bin/brix11 execute cmake --build build --target package
