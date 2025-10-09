@@ -21,38 +21,30 @@ jobs:
     container:
       image: ghcr.io/mattkretz/cplusplus-ci/gcc${{ matrix.version }}
 
+    # ✅ Prevent jobs from canceling each other
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.version }}
       cancel-in-progress: true
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-      #     cache: 'pip' # caching pip dependencies
-      # FIXME: - run: pip install -r requirements.txt
-      # see https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#using-the-pip-install-input
+          cache: 'pip'        # ✅ Enable pip caching for faster builds
 
-      # TODO(CK): not needed!
-      # - name: Setup Cpp
-      #   uses: aminya/setup-cpp@v1
-      #   with:
-      #     cmake: 4.1.2
-      #     ninja: 1.13.0
-      #     gcovr: true
-
-      - uses: ruby/setup-ruby@v1
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.4
 
-      - name: Install symlinks
+      - name: Install dependencies
         run: |
           apt-get update -q
-          apt-get install -q -y symlinks # XXX python-is-python3
-
-      - name: Install Python modules via pip
-        run: |
+          apt-get install -q -y symlinks
           python -m venv .venv
           . .venv/bin/activate
           pip install -r requirements.txt
