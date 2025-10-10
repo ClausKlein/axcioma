@@ -88,7 +88,7 @@ bin/brix11 execute cmake --install build --prefix ${INSTALL_PREFIX}
 # check that all needed libs are installed:
 export LD_LIBRARY_PATH="${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib"
 export PATH="${INSTALL_PREFIX}/bin:${PATH}"
-bin/brix11 execute cmake --build build --target test
+bin/brix11 execute ctest --test-dir build --output-on-failure
 
 bin/brix11 execute cmake --build build --target package
 

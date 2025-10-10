@@ -101,7 +101,7 @@ find ${STAGE_DIR}/lib -name 'lib*.so*' -o -name 'lib*.dylib' | egrep -v '(taox11
 # test installed example
 export PATH="${STAGE_DIR}/bin:${PATH}"
 #NO! pushd ${STAGE_DIR}/bin && ./run_test.pl -s -debug
-pushd ${BUILD_DIR} && ctest --output-on-failure
+ctest --test-dir build --output-on-failure
 
 # path needed for Linux
 export PATH="/usr/lib/llvm-17/bin:${PATH}"
