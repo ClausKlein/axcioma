@@ -21,7 +21,8 @@ set MPC_ROOT=%X11_BASE_ROOT%\ACE\MPC
 set RIDL_BE_PATH=;%TAOX11_ROOT%
 set RIDL_BE_SELECT=c++11
 set RIDL_ROOT=%X11_BASE_ROOT%\ridl\lib
-set INSTALL_PREFIX=%X11_BASE_ROOT%\stagedir
+set CMAKE_INSTALL_PREFIX=%X11_BASE_ROOT%\stagedir
+set INSTALL_PREFIX=%CMAKE_INSTALL_PREFIX%
 REM ###############################################################
 
 where ruby python perl cmake git
