@@ -126,29 +126,40 @@ set(TAOX11_LIBRARIES
 target_compile_features(itaox11 INTERFACE cxx_std_17)
 
 message(TRACE "X11_BASE_ROOT=$ENV{X11_BASE_ROOT}")
+
 foreach(lib_ ${TAOX11_LIBRARIES})
   find_library(
     ${lib_}_LIBRARY
+    # NOTE: taox11 use postfix 's' for static and 'd' for debug
     NAMES ${lib_} ${lib_}s ${lib_}d ${lib_}sd
-    # XXX NO_DEFAULT_PATH
-    PATHS $ENV{ACE_ROOT}/lib $ENV{X11_BASE_ROOT}/lib $ENV{X11_BASE_ROOT}/stagedir/lib
-    # XXX REQUIRED
+    PATHS
+      $ENV{ACE_ROOT}/lib
+      $ENV{X11_BASE_ROOT}/lib
+      $ENV{X11_BASE_ROOT}/stagedir/lib
   )
+
   if(${lib_}_LIBRARY)
-    message(STATUS "Found lib ${${lib_}_LIBRARY}")
-    list(APPEND FOUND_TAOX11_LIBRARIES ${lib_})
-    # NOTE: this installs only symlinks witch are not usable! XXX install(FILES ${${lib_}_LIBRARY} TYPE LIB)
-    get_filename_component(REAL_SRC "${${lib_}_LIBRARY}" REALPATH)
-    get_filename_component(REAL_NAME "${${lib_}_LIBRARY}" NAME)
+    set(_LIBRARY ${${lib_}_LIBRARY})
+    message(STATUS "Found ${_LIBRARY}")
+
+    # get the base name (e.g., libACE, libACEs, libACEd, or libACEsd)
+    get_filename_component(BASE_NAME "${_LIBRARY}" NAME_WE)
+
+    # remove "lib" prefix if present
+    string(REGEX REPLACE "^lib" "" STRIPPED_NAME "${BASE_NAME}")
+    message(STATUS "use -l${STRIPPED_NAME}")
+
+    # store the stripped basename name
+    list(APPEND FOUND_TAOX11_LIBRARIES "${STRIPPED_NAME}")
+
+    get_filename_component(REAL_SRC "${_LIBRARY}" REALPATH)
+    get_filename_component(REAL_NAME "${_LIBRARY}" NAME)
     message(TRACE "copy to $ENV{X11_BASE_ROOT}/stagedir/lib/${REAL_NAME}")
-    #NOTE: NO! XXX file(INSTALL "${${lib_}_LIBRARY}" DESTINATION "$ENV{X11_BASE_ROOT}/stagedir/lib" FOLLOW_SYMLINK_CHAIN)
   else()
-    message(WARNING "${${lib_}_LIBRARY}")
+    message(WARNING "Library not found for ${lib_}")
   endif()
 endforeach()
 
-# TODO(CK): append postfix 's' for static and 'd' for debug!
-# NOTE: if we use the original libs: target_link_libraries(itaox11 INTERFACE ${TAOX11_LIBRARIES})
 target_link_libraries(itaox11 INTERFACE ${FOUND_TAOX11_LIBRARIES})
 target_link_directories(
   itaox11 INTERFACE $<BUILD_INTERFACE:$ENV{ACE_ROOT}/lib> $<BUILD_INTERFACE:$ENV{X11_BASE_ROOT}/lib>
