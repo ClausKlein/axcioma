@@ -263,11 +263,25 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
               /Zc:inline
               /Zc:wchar_t
               /Zc:forScope
-              /ZI
+              # /ZI
               /Gm-
               /nologo
   )
-  target_link_options(itaox11 INTERFACE /FORCE:MULTIPLE)
+  if(CMAKE_BUILD_TYPE MATCHES Release)
+    # TODO(CK): check what is missing for Release!
+    target_compile_options( itaox11 INTERFACE /ZI)
+    target_link_options(itaox11 INTERFACE /FORCE:MULTIPLE)
+  else()
+    # TODO(CK): check what is missing for Debug!
+    #
+    # cmake build with cl : Command line warning D9025 : overriding '/Zi' with '/ZI'
+    #
+    # from brix11 Debug build:
+    # /ZI /JMC /nologo /W3 /WX- /diagnostics:column /MP /Od
+    # /Zc:wchar_t /Zc:forScope /Zc:inline
+    # /Gm- /EHsc /RTC1 /MDd /GS /fp:precise
+    # /Gd /TP /wd4355 /wd4250 /wd4290 /FC
+  endif()
 endif()
 
 # NOTE: With attached / means contents, but install *.cmake only! CK

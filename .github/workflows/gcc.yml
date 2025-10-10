@@ -21,7 +21,7 @@ jobs:
     container:
       image: ghcr.io/mattkretz/cplusplus-ci/gcc${{ matrix.version }}
 
-    # ✅ Prevent jobs from canceling each other
+    # Prevent jobs from canceling each other
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.version }}
       cancel-in-progress: true
@@ -30,21 +30,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.13'
-          cache: 'pip'        # ✅ Enable pip caching for faster builds
+      - name: Install Python, venv, and pip
+        run: |
+          apt-get update -q
+          apt-get install -y python3 python3-pip python3-venv python3-is-python sysmlinks
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.4
 
-      - name: Install dependencies
+      - name: Create venv for pip install
         run: |
-          apt-get update -q
-          apt-get install -q -y symlinks
           python -m venv .venv
           . .venv/bin/activate
           pip install -r requirements.txt
