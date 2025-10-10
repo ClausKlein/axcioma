@@ -313,7 +313,7 @@ if(NOT CYGWIN AND NOT MSYS)
   CPMAddPackage(
     NAME Callback_Quoter
     GITHUB_REPOSITORY "ClausKlein/Callback_Quoter"
-    GIT_TAG v0.1.4
+    GIT_TAG v0.1.3
     EXCLUDE_FROM_ALL OFF
     OPTIONS "CMAKE_UNITY_BUILD NO"
   )
