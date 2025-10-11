@@ -70,17 +70,19 @@ export LD_LIBRARY_PATH="${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr
 (type cmake && type ninja) || (python -m pip install -r requirements.txt && builddriver cat make-all.log)
 
 bin/brix11 execute cmake -B build -S . -G Ninja \
+  -D BUILD_SHARED_LIBS=OFF \
   -D CMAKE_BUILD_TYPE=Release \
-  -D CMAKE_SKIP_BUILD_RPATH=OFF \
-  -D CMAKE_INSTALL_RPATH=${INSTALL_PREFIX}/lib \
   -D CMAKE_BUILD_WITH_INSTALL_NAME_DIR=OFF \
   -D CMAKE_BUILD_WITH_INSTALL_RPATH=ON \
-  -D CMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-  -D CMAKE_STAGING_PREFIX=${INSTALL_PREFIX} \
-  -D CMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
   -D CMAKE_CXX_STANDARD=20 \
-  -D BUILD_SHARED_LIBS=OFF -Wdev -Wdeprecated \
-  --fresh
+  -D CMAKE_INSTALL_MESSAGE=NEVER \
+  -D CMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+  -D CMAKE_INSTALL_RPATH=${INSTALL_PREFIX}/lib \
+  -D CMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+  -D CMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+  -D CMAKE_SKIP_BUILD_RPATH=OFF \
+  -D CMAKE_STAGING_PREFIX=${INSTALL_PREFIX} \
+  -Wdev -Wdeprecated --fresh
 
 bin/brix11 execute cmake --build build --target all
 bin/brix11 execute cmake --install build --prefix ${INSTALL_PREFIX}

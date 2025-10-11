@@ -8,6 +8,18 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '30 15 * * 6'
+env:
+  ACE_ROOT: ${{ github.workspace }}/ACE_TAO/ACE
+  MPC_ROOT: ${{ github.workspace }}/ACE_TAO/MPC
+  TAO_ROOT: ${{ github.workspace }}/ACE_TAO/TAO
+  X11_BASE_ROOT: ${{ github.workspace }}
+  RIDL_ROOT: ${{ github.workspace }}/ridl
+  TAOX11_ROOT: ${{ github.workspace }}/taox11
+  INSTALL_PREFIX: ${{ github.workspace }}/stagedir
+  CMAKE_INSTALL_PREFIX: ${{ github.workspace }}/stagedir
+  PATH: $HOME/.local/bin:$PATH
+  CXX: g++
+  CC: gcc
 
 jobs:
   gcc:
@@ -46,11 +58,42 @@ jobs:
           . .venv/bin/activate
           pip install -r requirements.txt
 
-      - name: Run test suite
-        env:
-          CC: gcc
-          CXX: g++
-          PATH: $HOME/.local/bin:$PATH
+      # - name: Run test suite
+      #   env:
+      #     CC: gcc
+      #     CXX: g++
+      #     PATH: $HOME/.local/bin:$PATH
+      #   run: |
+      #     . .venv/bin/activate
+      #     ./build-taox11-on-linux.sh
+
+      - name: Run brix11 configure
+        run: |
+          $X11_BASE_ROOT/bin/brix11 configure # -W aceroot=$ACE_ROOT -W taoroot=$TAO_ROOT -W mpcroot=$MPC_ROOT
+      - name: Print brix11 configuration
+        run: |
+          $X11_BASE_ROOT/bin/brix11 env -- configure -P
+      - name: Run brix11 gen build
+        run: |
+          $X11_BASE_ROOT/bin/brix11 gen build workspace.mwc # -- gen build $TAOX11_ROOT/examples -- gen build $TAOX11_ROOT/orbsvcs/tests -- gen build $TAOX11_ROOT/tests
+      - name: Run brix11 make
+        run: |
+          $X11_BASE_ROOT/bin/brix11 make -N $X11_BASE_ROOT # -- make -N $TAOX11_ROOT/examples -- make -N $TAOX11_ROOT/orbsvcs/tests -- make -N $TAOX11_ROOT/tests
+      - name: Run cmake install
         run: |
           . .venv/bin/activate
-          ./build-taox11-on-linux.sh
+          export PATH="$X11_BASE_ROOT/bin:$X11_BASE_ROOT/lib:$TAOX11_ROOT/bin:$ACE_ROOT/bin:$ACE_ROOT/lib:$PATH"
+          export LD_LIBRARY_PATH=${X11_BASE_ROOT}/lib:${ACE_ROOT}/lib:/usr/local/lib:/usr/lib
+          $X11_BASE_ROOT/bin/brix11 execute cmake -B build -S . -G Ninja -D CMAKE_BUILD_TYPE=Release -D BUILD_SHARED_LIBS=OFF -Wdev -Wdeprecated
+          $X11_BASE_ROOT/bin/brix11 execute cmake --build build --target all
+          $X11_BASE_ROOT/bin/brix11 execute cmake --install build --prefix ${INSTALL_PREFIX}
+      - name: Run ctest
+        run: |
+          . .venv/bin/activate
+          export PATH="${INSTALL_PREFIX}/bin:${PATH}"
+          export LD_LIBRARY_PATH="${INSTALL_PREFIX}/lib:/usr/local/lib:/usr/lib"
+          $X11_BASE_ROOT/bin/brix11 execute ctest --test-dir build --output-on-failure
+      - name: Run cpack
+        run: |
+          . .venv/bin/activate
+          $X11_BASE_ROOT/bin/brix11 execute cmake --build build --target package
