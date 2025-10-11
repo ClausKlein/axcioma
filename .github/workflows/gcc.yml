@@ -9,6 +9,7 @@ on:
   schedule:
     - cron: '30 15 * * 6'
 env:
+  PATH: ${{ env.HOME }}/.local/bin:${{ env.PATH }}
   ACE_ROOT: ${{ github.workspace }}/ACE_TAO/ACE
   MPC_ROOT: ${{ github.workspace }}/ACE_TAO/MPC
   TAO_ROOT: ${{ github.workspace }}/ACE_TAO/TAO
@@ -17,7 +18,6 @@ env:
   TAOX11_ROOT: ${{ github.workspace }}/taox11
   INSTALL_PREFIX: ${{ github.workspace }}/stagedir
   CMAKE_INSTALL_PREFIX: ${{ github.workspace }}/stagedir
-  PATH: $HOME/.local/bin:$PATH
   CXX: g++
   CC: gcc
 
@@ -32,6 +32,7 @@ jobs:
 
     container:
       image: ghcr.io/mattkretz/cplusplus-ci/gcc${{ matrix.version }}
+      options: --user root
 
     # Prevent jobs from canceling each other
     concurrency:
@@ -51,6 +52,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.4
+
+      # - name: Add ~/.local/bin to PATH
+      #   run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Create venv for pip install
         run: |
@@ -75,10 +79,12 @@ jobs:
           $X11_BASE_ROOT/bin/brix11 env -- configure -P
       - name: Run brix11 gen build
         run: |
-          $X11_BASE_ROOT/bin/brix11 gen build workspace.mwc # -- gen build $TAOX11_ROOT/examples -- gen build $TAOX11_ROOT/orbsvcs/tests -- gen build $TAOX11_ROOT/tests
+          $X11_BASE_ROOT/bin/brix11 gen build workspace.mwc
+          # -- gen build $TAOX11_ROOT/examples -- gen build $TAOX11_ROOT/orbsvcs/tests -- gen build $TAOX11_ROOT/tests
       - name: Run brix11 make
         run: |
-          $X11_BASE_ROOT/bin/brix11 make -N $X11_BASE_ROOT # -- make -N $TAOX11_ROOT/examples -- make -N $TAOX11_ROOT/orbsvcs/tests -- make -N $TAOX11_ROOT/tests
+          $X11_BASE_ROOT/bin/brix11 make -N $X11_BASE_ROOT
+          # -- make -N $TAOX11_ROOT/examples -- make -N $TAOX11_ROOT/orbsvcs/tests -- make -N $TAOX11_ROOT/tests
       - name: Run cmake install
         run: |
           . .venv/bin/activate
