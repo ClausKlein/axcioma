@@ -9,7 +9,7 @@ on:
   schedule:
     - cron: '30 15 * * 6'
 env:
-  PATH: ${{ env.HOME }}/.local/bin:${{ env.PATH }}
+  # PATH: ${{ env.HOME }}/.local/bin:${{ env.PATH }}
   ACE_ROOT: ${{ github.workspace }}/ACE_TAO/ACE
   MPC_ROOT: ${{ github.workspace }}/ACE_TAO/MPC
   TAO_ROOT: ${{ github.workspace }}/ACE_TAO/TAO
