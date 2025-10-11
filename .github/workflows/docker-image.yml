@@ -1,0 +1,24 @@
+name: Docker Image CI build on ubuntu-latest
+
+on:
+  push:
+    branches:
+    - "develop"
+    - "master"
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file .devcontainer/Dockerfile --tag my-image-name:$(date +%s)

@@ -1,0 +1,41 @@
+include_guard(GLOBAL)
+
+# require a C++ standard
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+option(CMAKE_CXX_EXTENSIONS "" NO)
+option(CMAKE_CXX_STANDARD_REQUIRED "" YES)
+
+# NOTE: only for MSVC shared libs (DLL) should be build?
+include(CMakeDependentOption)
+# NO! cmake_dependent_option(BUILD_SHARED_LIBS "Build shared instead of static library" YES "MSVC" NO)
+option(BUILD_SHARED_LIBS "Build shared Libraries" NO)
+
+option(USE_POSTFIX "Use postfix for debug" YES)
+if(USE_POSTFIX)
+  set(CMAKE_DEBUG_POSTFIX d)
+endif()
+
+if(UNIX AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  set(CMAKE_DEPFILE_FLAGS_C "-MMD -MT <DEP_TARGET> -MF <DEP_FILE>")
+  set(CMAKE_DEPFILE_FLAGS_CXX "-MMD -MT <DEP_TARGET> -MF <DEP_FILE>")
+endif()
+
+set(CMAKE_SKIP_TEST_ALL_DEPENDENCY NO)
+set(CMAKE_INSTALL_MESSAGE LAZY)
+set(ENV{CTEST_OUTPUT_ON_FAILURE} YES)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+
+# set this variable to specify a common place where CMake should put all
+# libraries and executables (instead of CMAKE_CURRENT_BINARY_DIR)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+# ================================
+# add dependencies
+# ================================
+include(CPM)
+
+CPMUsePackageLock(package-lock.cmake)
